@@ -9,11 +9,11 @@ const PostSchema = new mongoose.Schema(
         },
         content: String,
         file: String,
-        userId: {
-            type: ObjectId,
-            ref: "User",
-            required: true,
-        },
+        // userId: {
+        //     type: ObjectId,
+        //     ref: "User",
+        //     required: true,
+        // },
     },
     { timestamps: true },
 );
