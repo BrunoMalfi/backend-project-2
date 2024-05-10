@@ -14,9 +14,9 @@ const handleTypeError = (error, request, response, next) => {
     if (error.name === "ValidationError") {
         handleValidationErrors(error, response);
     } else if (error.code === 11000) {
-        response.status(400).send("El correo tiene que ser único");
+        response.status(400).send("The email must be unique");
     } else {
-        response.status(500).send("Hubo un problema");
+        response.status(500).send("There was a problem");
     }
 };
 
