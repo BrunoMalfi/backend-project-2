@@ -15,6 +15,14 @@ const PostController = {
             });
         }
     },
+    async getAll(req, res) {
+        try {
+            const posts = await Post.find();
+            res.send(posts);
+        } catch (error) {
+            console.error(error);
+        }
+    },
 };
 
 module.exports = PostController;
