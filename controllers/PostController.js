@@ -24,6 +24,9 @@ const PostController = {
             res.send(posts);
         } catch (error) {
             console.error(error);
+            res.status(500).send({
+                message: "There was an issue finding the posts",
+            });
         }
     },
     async getById(req, res) {
@@ -32,6 +35,9 @@ const PostController = {
             res.send(post);
         } catch (error) {
             console.error(error);
+            res.status(500).send({
+                message: `There was an issue finding the post with id ${req.params.id}`,
+            });
         }
     },
     async update(req, res, next) {
@@ -68,6 +74,19 @@ const PostController = {
             res.send({ msg: "finded posts", posts });
         } catch (error) {
             console.log(error);
+            res.status(500).send({
+                message: `There was an issue finding the post with title ${req.params.title} `,
+            });
+        }
+    },
+    async count(req, res) {
+        try {
+            const count = await Post.countDocuments();
+            res.status(200).send({ msg: `actualmente hay ${count} posts ` });
+        } catch (error) {
+            res.status(500).send({
+                message: "There was an issue counting the posts",
+            });
         }
     },
 };
