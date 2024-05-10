@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const PostSchema = new mongoose.Schema(
     {
@@ -9,7 +10,7 @@ const PostSchema = new mongoose.Schema(
         content: String,
         file: String,
         userId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: ObjectId,
             ref: "User",
             required: true,
         },

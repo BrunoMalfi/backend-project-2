@@ -20,6 +20,5 @@ const UserController = {
             console.error(error);
         }
     },
-}; 
+};
 module.exports = UserController;
-g
