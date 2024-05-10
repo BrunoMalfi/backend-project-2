@@ -10,6 +10,7 @@ dbConnection();
 
 app.use("/users", require("./routes/users.js"));
 app.use("/posts", require("./routes/posts.js"));
+app.use("/comments", require("./routes/comments.js"));
 
 app.use(handleTypeError);
 
