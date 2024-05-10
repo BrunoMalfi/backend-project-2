@@ -1,18 +1,18 @@
 const Post = require("../models/Post.js");
 
 const PostController = {
-    async create(req, res, next) {
+    async create(req, res) {
         try {
-            // const file = req.file;
+            const file = req.file;
+
             const post = await Post.create({
                 ...req.body,
-                // file: file.filepath,
-                // userId: req.user._id,
+                file: file.path,
             });
-            res.status(201).send(post, console.log(file));
+
+            res.status(201).send({ post, file });
         } catch (error) {
             console.error(error);
-            res.status(500).send(next(error));
         }
     },
     async getAll(req, res) {
