@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const { dbConnection } = require("./config/config");
-const { handleTypeError } = require("./middlewares/errors");
+const { handleTypeError } = require("./middleware/errors");
 
 app.use(express.json());
 

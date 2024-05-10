@@ -22,4 +22,3 @@ const UserController = {
     },
 }; 
 module.exports = UserController;
-g
