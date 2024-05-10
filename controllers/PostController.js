@@ -44,5 +44,30 @@ const PostController = {
             });
         }
     },
+    async delete(req, res) {
+        try {
+            const post = await Post.findByIdAndDelete(req.params._id);
+            res.send({ message: "Post deleted", post });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "there was a problem trying to remove the post",
+            });
+        }
+    },
+    async getPostsBytitle(req, res, next) {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+
+            const posts = await Post.find({
+                $text: {
+                    $search: req.params.title,
+                },
+            });
+            res.send({ msg: "finded posts", posts });
+        } catch (error) {
+            console.log(error);
+        }
+    },
 };
 module.exports = PostController;
