@@ -14,6 +14,15 @@ const CommentController = {
             console.error(error);
         }
     },
+    async getAll(req, res) {
+        try {
+            const comments = await Comment.find();
+
+            res.status(201).send(comments);
+        } catch (error) {
+            console.error(error);
+        }
+    },
 };
 
 module.exports = CommentController;
