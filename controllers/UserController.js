@@ -20,5 +20,10 @@ const UserController = {
             console.error(error);
         }
     },
+<<<<<<< HEAD
 };
 module.exports = UserController;
+=======
+}; 
+module.exports = UserController;
+>>>>>>> bruno

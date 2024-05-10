@@ -2,7 +2,11 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const { dbConnection } = require("./config/config");
+<<<<<<< HEAD
 const { handleTypeError } = require("./middleware/errors.js");
+=======
+const { handleTypeError } = require("./middleware/errors");
+>>>>>>> bruno
 
 app.use(express.json());
 
