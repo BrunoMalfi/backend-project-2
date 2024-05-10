@@ -1,3 +1,4 @@
 module.exports = {
-    MONGO_URI: 'mongodb+srv://<name>:<password>@cluster0-tuqrv.mongodb.net/test?retryWrites=true&w=majority'
-}
+    MONGO_URI:
+        "mongodb+srv://Cluster78620:uuMda3E0UnvIPzdi@cluster786∫20.jcfu9lt.mongodb.net/learnWithUs",
+};
