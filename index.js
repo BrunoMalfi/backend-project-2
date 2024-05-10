@@ -1,12 +1,15 @@
 const express = require("express");
 const app = express();
 const PORT = 8080;
-const { dbConnection } = require("./config/config")
+const { dbConnection } = require("./config/config");
+const { handleTypeError } = require("./middlewares/errors");
 
-app.use(express.json())
+app.use(express.json());
 
-dbConnection()
+dbConnection();
 
-app.use("/users",require("./routes/users.js"))
+app.use("/users", require("./routes/users.js"));
 
-app.listen(PORT, ()=> console.log(`Server listening on port ${PORT}`));
+app.use(handleTypeError);
+
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
