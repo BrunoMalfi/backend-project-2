@@ -10,9 +10,7 @@ const PostController = {
             res.status(201).send(post);
         } catch (error) {
             console.error(error);
-            res.status(500).send({
-                message: "There was an issue creating new post",
-            });
+            res.status(500).send(next(error));
         }
     },
     async getAll(req, res) {

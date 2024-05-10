@@ -7,7 +7,10 @@ const PostSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please provide a title for this post"],
         },
-        content: String,
+        content: {
+            type: String,
+            required: [true, "Please provide content for this post"],
+        },
         file: String,
         // userId: {
         //     type: ObjectId,
