@@ -42,6 +42,7 @@ const PostController = {
     },
     async update(req, res) {
         try {
+            const file = req.file;
             const post = await Post.findByIdAndUpdate(
                 req.params._id,
                 req.body,
@@ -49,7 +50,7 @@ const PostController = {
                     new: true,
                 },
             );
-            res.status(200).send({ msg: "Post uptaded", post });
+            res.status(200).send({ msg: "Post uptaded", post, file });
         } catch (error) {
             console.error(error);
             res.status(500).send({
