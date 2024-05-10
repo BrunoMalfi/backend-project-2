@@ -3,11 +3,13 @@ const Post = require("../models/Post.js");
 const PostController = {
     async create(req, res, next) {
         try {
+            // const file = req.file;
             const post = await Post.create({
                 ...req.body,
+                // file: file.filepath,
                 // userId: req.user._id,
             });
-            res.status(201).send(post);
+            res.status(201).send(post, console.log(file));
         } catch (error) {
             console.error(error);
             res.status(500).send(next(error));
@@ -29,21 +31,25 @@ const PostController = {
     },
     async getById(req, res) {
         try {
-            const post = await Post.findById(req.params.id);
+            const post = await Post.findById(req.params._id);
             res.send(post);
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: `There was an issue finding the post with id ${req.params.id}`,
+                message: `There was an issue finding the post with id ${req.params._id}`,
             });
         }
     },
-    async update(req, res, next) {
+    async update(req, res) {
         try {
-            const post = await Post.findByIdAndUpdate(req.params.id, req.body, {
-                new: true,
-            });
-            res.status(200).send({ msg: "Post updated", post });
+            const post = await Post.findByIdAndUpdate(
+                req.params._id,
+                req.body,
+                {
+                    new: true,
+                },
+            );
+            res.status(200).send({ msg: "Post uptaded", post });
         } catch (error) {
             console.error(error);
             res.status(500).send({
