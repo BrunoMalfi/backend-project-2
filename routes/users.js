@@ -6,6 +6,7 @@ router.post("/new", UserController.create);
 router.post("/login", UserController.login);
 router.get("/", UserController.getAll);
 router.get("/getloggeduserdata/:token", UserController.getLoggedUserData);
+router.delete("/logout/:id", UserController.logout);
 
 
 module.exports = router;

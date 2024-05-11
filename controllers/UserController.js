@@ -47,17 +47,35 @@ const UserController = {
     },
     //not working 
     async getLoggedUserData(req, res) {
-        const token = req.param.token
+        const token = req.params.token
         try {
             const user = await User.findOne({
                 tokens:token
             })
-            res.send({ msg: 'Logged user data  ' + user})
+            res.send({ msg: 'Logged user data  ', user:{...user._doc,password:"******"} })
         } catch (error) {
             console.error(error);
             res.send({ msg: 'Token expired '})
         }
-    }
+    },
+    async logout(req, res ){
+        const UserId =  req.params.id 
+        const token = req.headers.authorization
+        try {
+            const user = await User.findOne({
+               _id:UserId,
+               tokens:token
+            })
+            await User.findByIdAndUpdate(UserId, {
+                $pull: { tokens: token },
+            })        
+            res.send({ msg: 'Good bye '+ user.name })
+        } catch (error) {
+            console.error(error);
+            res.send({ msg: "UserId or token couldn't be found "})
+        }
+
+    },
 
 };
 module.exports = UserController;
