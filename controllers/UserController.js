@@ -5,16 +5,17 @@ const { jwt_secret } = require('../config/keys.js')
 
 
 const UserController = {
-    async create(req, res) {
+    async create(req, res, next) {
         const password = bcrypt.hashSync(req.body.password,10)
         try {
             const user = await User.create({...req.body, password:password});
             res.status(201).send({msg : "New user created", user});
         } catch (error) {
             console.error(error);
-            res.status(500).send({
-                msg: "There was an issue creatring new user",
-            });
+            next(error);
+            // res.status(500).send({
+            //     msg: "There was an issue creatring new user",
+            // });
         }
     },
     async getAll(req, res) {

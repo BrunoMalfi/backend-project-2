@@ -6,7 +6,7 @@ const handleValidationErrors = (error, response) => {
         const errorMessages = errors.join(" || ");
         response.status(400).send({ messages: errorMessages });
     } else {
-        response.status(400).send({ message: errors });
+        response.status(400).send({ message: errors[0] });
     }
 };
 
