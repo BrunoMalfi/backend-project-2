@@ -74,6 +74,27 @@ const CommentController = {
             });
         }
     },
+    async like(req, res) {
+        try {
+            const commentId = req.params._id;
+            const token = req.headers.authorization;
+            const user = await User.findOne({
+                tokens: token,
+            });
+            const userId = user._id;
+            const comment = await Comment.findByIdAndUpdate(
+                commentId,
+                { $push: { likes: userId } },
+                { new: true },
+            );
+            res.send(comment);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was a problem with your like",
+            });
+        }
+    },
 };
 
 module.exports = CommentController;

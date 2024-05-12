@@ -8,6 +8,7 @@ router.post("/:post_id", imageLoad, CommentController.create);
 router.get("/", CommentController.getAll);
 router.get("/id/:_id", CommentController.getbyid);
 router.get("/author/:author", CommentController.getbyauthor);
+router.put("/like/:_id", CommentController.like);
 
 router.delete("/id/:_id", CommentController.delete);
 

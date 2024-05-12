@@ -122,12 +122,20 @@ const PostController = {
                 tokens: token,
             });
             const userId = user._id;
-            const post = await Post.findByIdAndUpdate(
-                postId,
-                { $push: { likes: userId } },
-                { new: true },
-            );
-            res.send(post);
+            const post = await Post.findById(postId);
+
+            const liked = post.likes.includes(userId);
+            let update;
+            if (liked) {
+                update = { $pull: { likes: userId } };
+            } else {
+                update = { $push: { likes: userId } };
+            }
+            const updatedPost = await Post.findByIdAndUpdate(postId, update, {
+                new: true,
+            });
+
+            res.send(updatedPost);
         } catch (error) {
             console.error(error);
             res.status(500).send({
