@@ -13,12 +13,11 @@ const CommentSchema = new mongoose.Schema(
             ref: "User",
             required: [true, "You must be logged in to comment  "],
         },
-        post: String,
-        // {
-        //     type: ObjectId,
-        //     ref: "Post",
-        //     required: true,
-        // },
+        post: {
+            type: ObjectId,
+            ref: "Post",
+            required: true,
+        },
     },
     { timestamps: true },
 );

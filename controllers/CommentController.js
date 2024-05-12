@@ -5,11 +5,13 @@ const User = require("../models/User.js");
 const CommentController = {
     async create(req, res) {
         try {
+            const post = req.params.post_id;
             const token = req.headers.authorization;
             const user = await User.findOne({ tokens: token });
             const comment = await Comment.create({
                 ...req.body,
                 author: user._id,
+                post: post,
             });
             await Post.findByIdAndUpdate(req.body.postId, {
                 $push: { comments: comment._id },
