@@ -13,6 +13,9 @@ const CommentController = {
                 author: user._id,
                 post: post,
             });
+            // as
+            //             // await user.updateOne({ $push: { post: post._id } });
+
             await Post.findByIdAndUpdate(req.params.post_id, {
                 $push: { comments: comment._id },
             });
@@ -24,11 +27,22 @@ const CommentController = {
     },
     async getAll(req, res) {
         try {
-            const comments = await Comment.find();
+            const comments = await Comment.find().populate("author");
 
             res.status(201).send(comments);
         } catch (error) {
             console.error(error);
+        }
+    },
+    async delete(req, res) {
+        try {
+            await Post.findByIdAndDelete(req.params._id);
+            res.send({ message: "Comment deleted" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "there was a problem trying to remove the comment",
+            });
         }
     },
 };

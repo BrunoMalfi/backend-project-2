@@ -4,7 +4,7 @@ const PostController = {
     async create(req, res) {
         try {
             const file = req.file;
-            const token = req.headers.authorization;
+            const token = await req.headers.authorization;
             const user = await User.findOne({
                 tokens: token,
             });
@@ -23,6 +23,14 @@ const PostController = {
         try {
             const { page = 1, limit = 10 } = req.query;
             const posts = await Post.find()
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "author",
+                        select: "name",
+                    },
+                })
+                .populate("author", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
             res.send(posts);
@@ -35,7 +43,15 @@ const PostController = {
     },
     async getById(req, res) {
         try {
-            const post = await Post.findById(req.params._id);
+            const post = await Post.findById(req.params._id)
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "author",
+                        select: "name",
+                    },
+                })
+                .populate("author", (select = "name"));
             res.send(post);
         } catch (error) {
             console.error(error);
