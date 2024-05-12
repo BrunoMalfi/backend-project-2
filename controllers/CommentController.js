@@ -13,7 +13,7 @@ const CommentController = {
                 author: user._id,
                 post: post,
             });
-            await Post.findByIdAndUpdate(req.body.postId, {
+            await Post.findByIdAndUpdate(req.params.post_id, {
                 $push: { comments: comment._id },
             });
 
