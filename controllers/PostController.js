@@ -1,16 +1,20 @@
 const Post = require("../models/Post.js");
-
+const User = require("../models/User.js");
 const PostController = {
     async create(req, res) {
         try {
             const file = req.file;
-
+            const token = req.headers.authorization;
+            const user = await User.findOne({
+                tokens: token,
+            });
             const post = await Post.create({
                 ...req.body,
                 file: file.path,
+                author: user._id,
             });
 
-            res.status(201).send({ post, file });
+            res.status(201).send({ post });
         } catch (error) {
             console.error(error);
         }

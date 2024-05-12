@@ -12,11 +12,11 @@ const PostSchema = new mongoose.Schema(
             required: [true, "Please provide content for this post"],
         },
         file: String,
-        // author: {
-        //     type: ObjectId,
-        //     ref: "User",
-        //     required: true,
-        // },
+        author: {
+            type: ObjectId,
+            ref: "User",
+            required: true,
+        },
         comments: [
             {
                 type: ObjectId,
