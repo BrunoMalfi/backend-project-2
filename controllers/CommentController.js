@@ -82,12 +82,22 @@ const CommentController = {
                 tokens: token,
             });
             const userId = user._id;
-            const comment = await Comment.findByIdAndUpdate(
+            const comment = await Comment.findById(commentId);
+            const liked = comment.likes.includes(userId);
+            let update;
+            if (liked) {
+                update = { $pull: { likes: userId } };
+            } else {
+                update = { $push: { likes: userId } };
+            }
+            const updatedComment = await Comment.findByIdAndUpdate(
                 commentId,
-                { $push: { likes: userId } },
-                { new: true },
+                update,
+                {
+                    new: true,
+                },
             );
-            res.send(comment);
+            res.send(updatedComment);
         } catch (error) {
             console.error(error);
             res.status(500).send({
