@@ -9,7 +9,7 @@ const UserController = {
         const password = bcrypt.hashSync(req.body.password,10)
         try {
             const user = await User.create({...req.body, password:password});
-            res.status(201).send({msg : "New user created", user});
+            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});
         } catch (error) {
             console.error(error);
             next(error);
@@ -20,7 +20,7 @@ const UserController = {
     },
     async getAll(req, res) {
         try {
-            const users = await User.find();
+            const users = await User.find({},{password:0});
             res.send({msg: "Users list : ",users});
         } catch (error) {
             console.error(error);
@@ -92,6 +92,17 @@ const UserController = {
         console.log(error);
         }
       },
+      async updateUserById(req, res, next) {
+        try {
+          const oldUser = await User.findById(req.params.id);
+          const newUser = await User.findByIdAndUpdate(req.params.id, {...req.body,password:oldUser.password}, { new: true })
+          res.send({ msg: "User successfully updated",oldUser:{...oldUser._doc,password:"******"} ,newUser:{...newUser._doc,password:"******"} });
+        } catch (error) {
+          console.error(error);
+          next(error);
+        }
+      },
+    
     
 
 };
