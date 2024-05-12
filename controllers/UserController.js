@@ -77,6 +77,22 @@ const UserController = {
         }
 
     },
+    async getUserByName(req, res, next) {
+        try {
+          if (req.params.name.length>20){
+            return res.status(400).send('Name to long')
+          }
+          const name = new RegExp(req.params.name, "i");
+          const user = await User.find({name},{password:0});
+          if(user.length == 0 ){res.send({msg: "User with name "+req.params.name+" not found"});}
+          else if (user.length == 1) {res.send({msg: "User found : ", user});}
+          else {res.send({msg: "Users found : ", user});}
+        } catch (error) {
+        next(error)
+        console.log(error);
+        }
+      },
+    
 
 };
 module.exports = UserController;
