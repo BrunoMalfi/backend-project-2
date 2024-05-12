@@ -50,7 +50,9 @@ const UserController = {
     async getLoggedUserData(req, res) {
         const token = req.params.token
         try {
+            const payload = jwt.verify(token, jwt_secret);
             const user = await User.findOne({
+                _id:payload._id,
                 tokens:token
             })
             res.send({ msg: 'Logged user data  ', user:{...user._doc,password:"******"} })
@@ -99,10 +101,18 @@ const UserController = {
           res.send({ msg: "User successfully updated",oldUser:{...oldUser._doc,password:"******"} ,newUser:{...newUser._doc,password:"******"} });
         } catch (error) {
           console.error(error);
-          next(error);
+          res.send({msg:"user with Id: "+req.params.id+" not found"})
         }
       },
-    
+    async getUserById(req,res){
+        try{
+            const user = await User.findById(req.params.id,{password:0, tokens:0});
+            res.send({msg: "User:", user})
+        }catch(error) {
+            console.error(error);
+            res.send({msg:"user with Id: "+req.params.id+" not found"})
+        }
+    },
     
 
 };

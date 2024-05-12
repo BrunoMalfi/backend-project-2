@@ -10,6 +10,7 @@ router.get("/getloggeduserdata/:token", UserController.getLoggedUserData);
 router.delete("/logout/:id", UserController.logout);
 router.get("/getuserbyname/:name", UserController.getUserByName);
 router.put("/updateuserbyid/:id",authentication,UserController.updateUserById);
+router.get("/getuserbyid/:id",UserController.getUserById);
 
 
 
