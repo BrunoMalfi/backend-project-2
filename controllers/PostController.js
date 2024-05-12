@@ -114,5 +114,26 @@ const PostController = {
             });
         }
     },
+    async like(req, res) {
+        try {
+            const postId = req.params._id;
+            const token = req.headers.authorization;
+            const user = await User.findOne({
+                tokens: token,
+            });
+            const userId = user._id;
+            const post = await Post.findByIdAndUpdate(
+                postId,
+                { $push: { likes: userId } },
+                { new: true },
+            );
+            res.send(post);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was a problem with your like",
+            });
+        }
+    },
 };
 module.exports = PostController;
