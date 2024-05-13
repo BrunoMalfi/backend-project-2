@@ -6,16 +6,17 @@ const { jwt_secret } = require('../config/keys.js')
 
 const UserController = {
     async create(req, res, next) {
-        const password = bcrypt.hashSync(req.body.password,10)
+        const file = req.file != undefined ? req.file: {path:false};
         try {
-            const user = await User.create({...req.body, password:password});
+            const password = bcrypt.hashSync(req.body.password,10)
+            const user = await User.create({...req.body, password:password,avatarPath:file.path});
             res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});
         } catch (error) {
             console.error(error);
             next(error);
-            // res.status(500).send({
-            //     msg: "There was an issue creatring new user",
-            // });
+            //  res.status(500).send({
+            //      msg: "There was an issue creatring new user",
+            //  });
         }
     },
     async getAll(req, res) {
@@ -85,7 +86,7 @@ const UserController = {
             return res.status(400).send('Name to long')
           }
           const name = new RegExp(req.params.name, "i");
-          const user = await User.find({name},{password:0});
+          const user = await User.find({name},{password:0,tokens:0});
           if(user.length == 0 ){res.send({msg: "User with name "+req.params.name+" not found"});}
           else if (user.length == 1) {res.send({msg: "User found : ", user});}
           else {res.send({msg: "Users found : ", user});}

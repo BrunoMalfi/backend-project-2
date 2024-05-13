@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
 const {authentication} =require("../middleware/authentication.js")
+const {imageLoad} =require('../middleware/multer.js')
 
-router.post("/new", UserController.create);
+router.post("/new",imageLoad,UserController.create);
 router.post("/login", UserController.login);
 router.get("/", UserController.getAll);
 router.get("/getloggeduserdata/:token", UserController.getLoggedUserData);
