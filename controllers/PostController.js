@@ -103,10 +103,7 @@ const PostController = {
     async like(req, res) {
         try {
             const postId = req.params._id;
-            const token = req.headers.authorization;
-            const user = await User.findOne({
-                tokens: token,
-            });
+            const user = req.user;
             const userId = user._id;
             const post = await Post.findById(postId);
 
