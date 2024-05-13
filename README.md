@@ -21,8 +21,10 @@
 -   **MongoDB**: Base de datos NoSQL utilizada para almacenar y gestionar los datos de la aplicación.
 -   **Mongoose**: Biblioteca de modelado de datos para MongoDB en Node.js, que proporciona una solución simple pero potente para trabajar con bases de datos MongoDB.
 -   **Postman**: Herramienta de colaboración para el desarrollo de APIs que permite probar, documentar y compartir APIs de manera eficiente.
--   **dotenv**: Módulo de Node.js que carga variables de entorno desde un archivo `.env` para su uso en la aplicación.
 -   **npm**: Administrador de paquetes de Node.js utilizado para instalar y administrar las dependencias del proyecto.
+-   **Jsonwebtoken**:
+-   **Bcryptjs**:
+-   **Nodemon**:
 
 Estas tecnologías y herramientas proporcionan una base sólida para construir una API robusta y escalable para tu aplicación de red social.
 

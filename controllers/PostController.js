@@ -11,12 +11,12 @@ const PostController = {
             const post = await Post.create({
                 ...req.body,
                 file: file.path,
-                author: user._id,
+                userId: user._id,
             });
 
-            res.status(201).send({ post });
+            res.status(201).send(post);
         } catch (error) {
-            console.error(error);
+            res.send(error);
         }
     },
     async getAll(req, res) {
@@ -24,13 +24,13 @@ const PostController = {
             const { page = 1, limit = 10 } = req.query;
             const posts = await Post.find()
                 .populate({
-                    path: "comments",
+                    path: "commentsIds",
                     populate: {
-                        path: "author",
+                        path: "userId",
                         select: "name",
                     },
                 })
-                .populate("author", (select = "name"))
+                .populate("userId", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
             res.send(posts);
@@ -45,13 +45,13 @@ const PostController = {
         try {
             const post = await Post.findById(req.params._id)
                 .populate({
-                    path: "comments",
+                    path: "commentsIds",
                     populate: {
-                        path: "author",
+                        path: "userId",
                         select: "name",
                     },
                 })
-                .populate("author", (select = "name"));
+                .populate("userId", (select = "name"));
             res.send(post);
         } catch (error) {
             console.error(error);

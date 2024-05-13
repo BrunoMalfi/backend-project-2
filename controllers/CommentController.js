@@ -5,35 +5,22 @@ const User = require("../models/User.js");
 const CommentController = {
     async create(req, res) {
         try {
-            const post = req.params.post_id;
-            const file = req.file;
+            const comment = await Comment.create(req.body);
 
-            const token = req.headers.authorization;
-            const user = await User.findOne({ tokens: token });
-            const comment = await Comment.create({
-                ...req.body,
-                author: user._id,
-                post: post,
-                file: file.path,
-            });
-            // await user.updateOne({ $push: { post: post._id } });
-
-            await Post.findByIdAndUpdate(req.params.post_id, {
-                $push: { comments: comment._id },
-            });
-
-            res.status(201).send({ comment, file });
+            res.status(201).send({ comment });
         } catch (error) {
-            console.error(error);
+            return console.log(error);
         }
     },
     async getAll(req, res) {
         try {
-            const comments = await Comment.find().populate("author");
+            const comments = await Comment.find().populate("userId");
 
             res.status(201).send(comments);
         } catch (error) {
-            console.error(error);
+            res.send(500).send({
+                msg: "There was a problem trying to get the comments",
+            });
         }
     },
     async delete(req, res) {
@@ -52,18 +39,20 @@ const CommentController = {
             const comment = await Comment.findById(req.params._id);
             res.status(201).send(comment);
         } catch (error) {
-            console.error(error);
+            res.send(500).send({
+                msg: "There was a problem trying to get the comments",
+            });
         }
     },
-    async getbyauthor(req, res) {
+    async getbyuser(req, res) {
         try {
-            const author = req.params.author;
+            const userId = req.params.user;
             const user = await User.findOne({
-                name: author,
+                name: userId,
             });
             // const comments = user.comments;
             res.status(201).send({
-                msg: `Comments of ${req.params.author}:`,
+                msg: `Comments of ${req.params.user}:`,
                 // ,comments,
             });
             console.log(user);
