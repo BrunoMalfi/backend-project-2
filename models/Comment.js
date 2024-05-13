@@ -13,6 +13,7 @@ const CommentSchema = new mongoose.Schema(
             ref: "User",
             required: [true, "You must be logged in to comment  "],
         },
+        author: String,
         postId: {
             type: ObjectId,
             ref: "Post",
@@ -22,6 +23,10 @@ const CommentSchema = new mongoose.Schema(
     },
     { timestamps: true },
 );
+CommentSchema.index({
+    author: "text",
+});
+
 const Comment = mongoose.model("Comment", CommentSchema);
 
 module.exports = Comment;

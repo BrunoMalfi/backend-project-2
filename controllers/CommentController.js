@@ -11,6 +11,7 @@ const CommentController = {
                 ...req.body,
                 userId: user._id,
                 postId: post,
+                author: user.name,
             });
 
             res.status(201).send({ comment });
@@ -52,16 +53,14 @@ const CommentController = {
     },
     async getbyuser(req, res) {
         try {
-            const userId = req.params.user;
-            const user = await User.findOne({
-                name: userId,
+            const user = req.params.user;
+            const comments = await Comment.find({
+                $text: {
+                    $search: user,
+                },
             });
-            // const comments = user.comments;
-            res.status(201).send({
-                msg: `Comments of ${req.params.user}:`,
-                // ,comments,
-            });
-            console.log(user);
+
+            res.status(201).send({ msg: `comments of ${user}: `, comments });
         } catch (error) {
             console.error(error);
             res.send(500).send({
@@ -72,10 +71,7 @@ const CommentController = {
     async like(req, res) {
         try {
             const commentId = req.params._id;
-            const token = req.headers.authorization;
-            const user = await User.findOne({
-                tokens: token,
-            });
+            const user = req.user;
             const userId = user._id;
             const comment = await Comment.findById(commentId);
             const liked = comment.likes.includes(userId);

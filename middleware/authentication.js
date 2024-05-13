@@ -19,6 +19,16 @@ const authentication = async (req, res, next) => {
             .send({ error, msg: "There was a problem with the token" });
     }
 };
+const isAdmin = async (req, res, next) => {
+    const admins = ["admin", "superadmin"];
+    if (!admins.includes(req.user.role)) {
+        return res.status(403).send({
+            message: "You do not have permission",
+        });
+    }
+    next();
+};
+
 const isAuthor = async (req, res, next) => {
     try {
         const order = await Order.findById(req.params._id);

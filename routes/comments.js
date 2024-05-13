@@ -13,7 +13,7 @@ router.post(
 router.get("/", CommentController.getAll);
 router.get("/id/:_id", CommentController.getbyid);
 router.get("/user/:user", CommentController.getbyuser);
-router.put("/like/:_id", CommentController.like);
+router.put("/like/:_id", authentication, CommentController.like);
 
 router.delete("/id/:_id", CommentController.delete);
 

@@ -21,13 +21,7 @@ const PostController = {
         try {
             const { page = 1, limit = 10 } = req.query;
             const posts = await Post.find()
-                .populate({
-                    path: "commentsIds",
-                    populate: {
-                        path: "userId",
-                        select: "name",
-                    },
-                })
+                .populate("commentsIds")
                 .populate("userId", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
@@ -42,13 +36,7 @@ const PostController = {
     async getById(req, res) {
         try {
             const post = await Post.findById(req.params._id)
-                .populate({
-                    path: "commentsIds",
-                    populate: {
-                        path: "userId",
-                        select: "name",
-                    },
-                })
+                .populate("commentsIds")
                 .populate("userId", (select = "name"));
             res.send(post);
         } catch (error) {
