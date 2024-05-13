@@ -5,22 +5,23 @@ const { jwt_secret } = require("../config/keys.js");
 
 const UserController = {
     async create(req, res, next) {
-        const password = bcrypt.hashSync(req.body.password, 10);
+        const file = req.file != undefined ? req.file: {path:false};
         try {
-            const user = await User.create({ ...req.body, password: password });
-            res.status(201).send({ msg: "New user created", user });
+            const password = bcrypt.hashSync(req.body.password,10)
+            const user = await User.create({...req.body, password:password,avatarPath:file.path});
+            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});
         } catch (error) {
             console.error(error);
             next(error);
-            // res.status(500).send({
-            //     msg: "There was an issue creatring new user",
-            // });
+            //  res.status(500).send({
+            //      msg: "There was an issue creatring new user",
+            //  });
         }
     },
     async getAll(req, res) {
         try {
-            const users = await User.find();
-            res.send({ msg: "Users list : ", users });
+            const users = await User.find({},{password:0});
+            res.send({msg: "Users list : ",users});
         } catch (error) {
             console.error(error);
         }
@@ -52,13 +53,21 @@ const UserController = {
     async getLoggedUserData(req, res) {
         const token = req.params.token;
         try {
+            const payload = jwt.verify(token, jwt_secret);
             const user = await User.findOne({
+<<<<<<< HEAD
                 tokens: token,
             });
             res.send({
                 msg: "Logged user data  ",
                 user: { ...user._doc, password: "******" },
             });
+=======
+                _id:payload._id,
+                tokens:token
+            })
+            res.send({ msg: 'Logged user data  ', user:{...user._doc,password:"******"} })
+>>>>>>> 2b64927512f264661b450157db7ab38114bcbd9b
         } catch (error) {
             console.error(error);
             res.send({ msg: "Token expired " });
@@ -81,5 +90,46 @@ const UserController = {
             res.send({ msg: "UserId or token couldn't be found " });
         }
     },
+<<<<<<< HEAD
+=======
+    async getUserByName(req, res, next) {
+        try {
+          if (req.params.name.length>20){
+            return res.status(400).send('Name to long')
+          }
+          const name = new RegExp(req.params.name, "i");
+          const user = await User.find({name},{password:0,tokens:0});
+          if(user.length == 0 ){res.send({msg: "User with name "+req.params.name+" not found"});}
+          else if (user.length == 1) {res.send({msg: "User found : ", user});}
+          else {res.send({msg: "Users found : ", user});}
+        } catch (error) {
+        next(error)
+        console.log(error);
+        }
+      },
+      async updateUserById(req, res, next) {
+        try {
+          const oldUser = await User.findById(req.params.id);
+          let file = req.file != undefined ? req.file: {path:false};
+          file = file.path ? file:oldUser.avatarPath; 
+          const newUser = await User.findByIdAndUpdate(req.params.id, {...req.body,password:oldUser.password,avatarPath:file.path}, { new: true })
+          res.send({ msg: "User successfully updated",oldUser:{...oldUser._doc,password:"******"} ,newUser:{...newUser._doc,password:"******"} });
+        } catch (error) {
+          console.error(error);
+          res.send({msg:"user with Id: "+req.params.id+" not found"})
+        }
+      },
+    async getUserById(req,res){
+        try{
+            const user = await User.findById(req.params.id,{password:0, tokens:0});
+            res.send({msg: "User:", user})
+        }catch(error) {
+            console.error(error);
+            res.send({msg:"user with Id: "+req.params.id+" not found"})
+        }
+    },
+    
+
+>>>>>>> 2b64927512f264661b450157db7ab38114bcbd9b
 };
 module.exports = UserController;
