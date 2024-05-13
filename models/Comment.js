@@ -13,7 +13,7 @@ const CommentSchema = new mongoose.Schema(
             ref: "User",
             required: [true, "You must be logged in to comment  "],
         },
-        post: {
+        postId: {
             type: ObjectId,
             ref: "Post",
             required: true,
