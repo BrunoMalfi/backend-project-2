@@ -96,6 +96,24 @@ const CommentController = {
             });
         }
     },
+    async update(req, res) {
+        try {
+            const file = req.file;
+            const comment = await Comment.findByIdAndUpdate(
+                req.params._id,
+                req.body,
+                {
+                    new: true,
+                },
+            );
+            res.status(200).send({ msg: "Comment uptaded", comment, file });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was an issue updating the post",
+            });
+        }
+    },
 };
 
 module.exports = CommentController;
