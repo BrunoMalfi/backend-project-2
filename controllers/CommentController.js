@@ -5,9 +5,15 @@ const User = require("../models/User.js");
 const CommentController = {
     async create(req, res) {
         try {
-            const comment = await Comment.create(req.body);
+            const user = req.user;
+            const post = req.params.postId;
+            const comment = await Comment.create({
+                ...req.body,
+                userId: user._id,
+                postId: post,
+            });
 
-            res.status(201).send({ comment, file });
+            res.status(201).send({ comment });
         } catch (error) {
             return console.log(error);
         }

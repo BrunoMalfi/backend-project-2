@@ -4,10 +4,8 @@ const PostController = {
     async create(req, res) {
         try {
             const file = req.file;
-            const token = await req.headers.authorization;
-            const user = await User.findOne({
-                tokens: token,
-            });
+            const user = req.user;
+
             const post = await Post.create({
                 ...req.body,
                 file: file.path,
