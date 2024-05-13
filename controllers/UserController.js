@@ -98,7 +98,9 @@ const UserController = {
       async updateUserById(req, res, next) {
         try {
           const oldUser = await User.findById(req.params.id);
-          const newUser = await User.findByIdAndUpdate(req.params.id, {...req.body,password:oldUser.password}, { new: true })
+          let file = req.file != undefined ? req.file: {path:false};
+          file = file.path ? file:oldUser.avatarPath; 
+          const newUser = await User.findByIdAndUpdate(req.params.id, {...req.body,password:oldUser.password,avatarPath:file.path}, { new: true })
           res.send({ msg: "User successfully updated",oldUser:{...oldUser._doc,password:"******"} ,newUser:{...newUser._doc,password:"******"} });
         } catch (error) {
           console.error(error);

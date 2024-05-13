@@ -10,7 +10,7 @@ router.get("/", UserController.getAll);
 router.get("/getloggeduserdata/:token", UserController.getLoggedUserData);
 router.delete("/logout/:id", UserController.logout);
 router.get("/getuserbyname/:name", UserController.getUserByName);
-router.put("/updateuserbyid/:id",authentication,UserController.updateUserById);
+router.put("/updateuserbyid/:id",authentication,imageLoad,UserController.updateUserById);
 router.get("/getuserbyid/:id",UserController.getUserById);
 
 
