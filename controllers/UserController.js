@@ -55,19 +55,10 @@ const UserController = {
         try {
             const payload = jwt.verify(token, jwt_secret);
             const user = await User.findOne({
-<<<<<<< HEAD
-                tokens: token,
-            });
-            res.send({
-                msg: "Logged user data  ",
-                user: { ...user._doc, password: "******" },
-            });
-=======
                 _id:payload._id,
                 tokens:token
             })
             res.send({ msg: 'Logged user data  ', user:{...user._doc,password:"******"} })
->>>>>>> 2b64927512f264661b450157db7ab38114bcbd9b
         } catch (error) {
             console.error(error);
             res.send({ msg: "Token expired " });
@@ -90,8 +81,6 @@ const UserController = {
             res.send({ msg: "UserId or token couldn't be found " });
         }
     },
-<<<<<<< HEAD
-=======
     async getUserByName(req, res, next) {
         try {
           if (req.params.name.length>20){
@@ -130,6 +119,5 @@ const UserController = {
     },
     
 
->>>>>>> 2b64927512f264661b450157db7ab38114bcbd9b
 };
 module.exports = UserController;
