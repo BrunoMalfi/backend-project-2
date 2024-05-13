@@ -5,26 +5,11 @@ const User = require("../models/User.js");
 const CommentController = {
     async create(req, res) {
         try {
-            const post = req.params.post_id;
-            const file = req.file;
-
-            const token = req.headers.authorization;
-            const user = await User.findOne({ tokens: token });
-            const comment = await Comment.create({
-                ...req.body,
-                userId: user._id,
-                postId: post,
-                file: file.path,
-            });
-            // await user.updateOne({ $push: { post: post._id } });
-
-            await Post.findByIdAndUpdate(req.params.post_id, {
-                $push: { commentsIds: comment._id },
-            });
+            const comment = await Comment.create(req.body);
 
             res.status(201).send({ comment, file });
         } catch (error) {
-            console.error(error);
+            return console.log(error);
         }
     },
     async getAll(req, res) {

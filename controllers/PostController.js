@@ -1,24 +1,36 @@
 const Post = require("../models/Post.js");
-
+const User = require("../models/User.js");
 const PostController = {
     async create(req, res) {
         try {
             const file = req.file;
-
+            const token = await req.headers.authorization;
+            const user = await User.findOne({
+                tokens: token,
+            });
             const post = await Post.create({
                 ...req.body,
                 file: file.path,
+                userId: user._id,
             });
 
-            res.status(201).send({ post, file });
+            res.status(201).send(post);
         } catch (error) {
-            console.error(error);
+            res.send(error);
         }
     },
     async getAll(req, res) {
         try {
             const { page = 1, limit = 10 } = req.query;
             const posts = await Post.find()
+                .populate({
+                    path: "commentsIds",
+                    populate: {
+                        path: "userId",
+                        select: "name",
+                    },
+                })
+                .populate("userId", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
             res.send(posts);
@@ -31,7 +43,15 @@ const PostController = {
     },
     async getById(req, res) {
         try {
-            const post = await Post.findById(req.params._id);
+            const post = await Post.findById(req.params._id)
+                .populate({
+                    path: "commentsIds",
+                    populate: {
+                        path: "userId",
+                        select: "name",
+                    },
+                })
+                .populate("userId", (select = "name"));
             res.send(post);
         } catch (error) {
             console.error(error);
@@ -91,6 +111,35 @@ const PostController = {
         } catch (error) {
             res.status(500).send({
                 message: "There was an issue counting the posts",
+            });
+        }
+    },
+    async like(req, res) {
+        try {
+            const postId = req.params._id;
+            const token = req.headers.authorization;
+            const user = await User.findOne({
+                tokens: token,
+            });
+            const userId = user._id;
+            const post = await Post.findById(postId);
+
+            const liked = post.likes.includes(userId);
+            let update;
+            if (liked) {
+                update = { $pull: { likes: userId } };
+            } else {
+                update = { $push: { likes: userId } };
+            }
+            const updatedPost = await Post.findByIdAndUpdate(postId, update, {
+                new: true,
+            });
+
+            res.send(updatedPost);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was a problem with your like",
             });
         }
     },

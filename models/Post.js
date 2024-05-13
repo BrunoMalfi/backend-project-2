@@ -12,17 +12,18 @@ const PostSchema = new mongoose.Schema(
             required: [true, "Please provide content for this post"],
         },
         file: String,
-        // author: {
-        //     type: ObjectId,
-        //     ref: "User",
-        //     required: true,
-        // },
-        comments: [
+        userId: {
+            type: ObjectId,
+            ref: "User",
+            required: true,
+        },
+        commentsIds: [
             {
                 type: ObjectId,
                 ref: "Comment",
             },
         ],
+        likes: [{ type: ObjectId }],
     },
     { timestamps: true },
 );
