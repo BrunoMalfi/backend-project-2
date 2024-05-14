@@ -8,7 +8,7 @@ const PostController = {
 
             const post = await Post.create({
                 ...req.body,
-                file: file.path,
+                // file: file.path,
                 userId: user._id,
             });
 

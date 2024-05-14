@@ -24,6 +24,19 @@ const UserSchema = new mongoose.Schema(
         },
         avatarPath: { type: String },
         tokens: [],
+
+        postIds: [
+            {
+                type: ObjectId,
+                ref: "Post",
+            },
+        ],
+        commentsIds: [
+            {
+                type: ObjectId,
+                ref: "Comment",
+            },
+        ],
     },
     { timestamps: true },
 );
