@@ -109,23 +109,45 @@ const PostController = {
             const user = req.user;
             const userId = user._id;
             const post = await Post.findById(postId);
-
             const liked = post.likes.includes(userId);
-            let update;
             if (liked) {
-                update = { $pull: { likes: userId } };
-            } else {
-                update = { $push: { likes: userId } };
+                return res.status(400).send("You alredy put like on this post");
             }
-            const updatedPost = await Post.findByIdAndUpdate(postId, update, {
-                new: true,
-            });
-
-            res.send(updatedPost);
+            const likedPost = await Post.findByIdAndUpdate(
+                req.params._id,
+                { $push: { likes: userId } },
+                { new: true },
+            );
+            res.send(likedPost);
         } catch (error) {
             console.error(error);
             res.status(500).send({
                 message: "There was a problem with your like",
+                error,
+            });
+        }
+    },
+    async unlike(req, res) {
+        try {
+            const postId = req.params._id;
+            const user = req.user;
+            const userId = user._id;
+            const post = await Post.findById(postId);
+            const liked = post.likes.includes(userId);
+            if (!liked) {
+                return res.status(400).send("There is no like on this post");
+            }
+            const likedPost = await Post.findByIdAndUpdate(
+                req.params._id,
+                { $pull: { likes: userId } },
+                { new: true },
+            );
+            res.send(likedPost);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was a problem with your like",
+                error,
             });
         }
     },

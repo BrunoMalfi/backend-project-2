@@ -78,24 +78,46 @@ const CommentController = {
             const userId = user._id;
             const comment = await Comment.findById(commentId);
             const liked = comment.likes.includes(userId);
-            let update;
             if (liked) {
-                update = { $pull: { likes: userId } };
-            } else {
-                update = { $push: { likes: userId } };
+                return res
+                    .status(400)
+                    .send("You alredy put like on this comment");
             }
-            const updatedComment = await Comment.findByIdAndUpdate(
-                commentId,
-                update,
-                {
-                    new: true,
-                },
+            const likedComment = await Comment.findByIdAndUpdate(
+                req.params._id,
+                { $push: { likes: userId } },
+                { new: true },
             );
-            res.send(updatedComment);
+            res.send(likedComment);
         } catch (error) {
             console.error(error);
             res.status(500).send({
                 message: "There was a problem with your like",
+                error,
+            });
+        }
+    },
+    async unlike(req, res) {
+        try {
+            const commentId = req.params._id;
+            const user = req.user;
+            const userId = user._id;
+            const comment = await Comment.findById(commentId);
+            const liked = comment.likes.includes(userId);
+            if (!liked) {
+                return res.status(400).send("There is no like on this comment");
+            }
+            const likedComment = await Comment.findByIdAndUpdate(
+                req.params._id,
+                { $pull: { likes: userId } },
+                { new: true },
+            );
+            res.send(likedComment);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was a problem with your like",
+                error,
             });
         }
     },
