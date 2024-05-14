@@ -25,12 +25,9 @@ const UserSchema = new mongoose.Schema(
         },
         avatarPath: { type: String },
         tokens: [],
-<<<<<<< HEAD
     avatarPath:{type:String},
     active:{type:Boolean, default:false},
     tokens:[],
-  }, { timestamps: true });
-=======
         commentsIds: [
             {
                 type: ObjectId,
@@ -46,7 +43,6 @@ const UserSchema = new mongoose.Schema(
     },
     { timestamps: true },
 );
->>>>>>> superdani
 
 const User = mongoose.model("User", UserSchema);
 
