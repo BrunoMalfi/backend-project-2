@@ -25,6 +25,12 @@ const UserSchema = new mongoose.Schema(
         },
         avatarPath: { type: String },
         tokens: [],
+        avatarPath: { type: String },
+        active: { type: Boolean, default: false },
+        tokens: [],
+        avatarPath: { type: String },
+        active: { type: Boolean, default: false },
+        tokens: [],
         commentsIds: [
             {
                 type: ObjectId,
