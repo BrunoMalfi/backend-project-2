@@ -6,6 +6,7 @@ const { dbConnection } = require("./config/config");
 const { handleTypeError } = require("./middleware/errors");
 
 app.use(express.json());
+app.use(cors());
 
 dbConnection();
 
