@@ -1,4 +1,5 @@
 node_modules
 keys.js
 uploads/*
-test
+nodemailer.js
+DS_Store
