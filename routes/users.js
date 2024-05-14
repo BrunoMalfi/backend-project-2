@@ -5,6 +5,7 @@ const {authentication} =require("../middleware/authentication.js")
 const {imageLoad} =require('../middleware/multer.js')
 
 router.post("/new",imageLoad,UserController.create);
+router.get("/confirm/:emailToken",UserController.confirm)
 router.post("/login", UserController.login);
 router.get("/", UserController.getAll);
 router.get("/getloggeduserdata",authentication, UserController.getLoggedUserData);

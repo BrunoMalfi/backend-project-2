@@ -2,6 +2,8 @@ const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { jwt_secret } = require("../config/keys.js");
+const transporter = require("../config/nodemailer");
+
 
 const UserController = {
     async create(req, res, next) {
@@ -9,7 +11,16 @@ const UserController = {
         try {
             const password = bcrypt.hashSync(req.body.password,10)
             const user = await User.create({...req.body, password:password,avatarPath:file.path});
-            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});
+            const emailToken = jwt.sign({email:req.body.email},jwt_secret,{expiresIn:'48h'})
+            const url = 'http://localhost:8080/users/confirm/'+ emailToken
+            await transporter.sendMail({
+                to: req.body.email,
+                subject: "Confirme su registro",
+                html: `<h3> Bienvenido, estás a un paso de registrarte </h3>
+                <a href="${url}"> Clica para confirmar tu registro</a>
+                `,
+              });
+            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});        
         } catch (error) {
             console.error(error);
             next(error);
@@ -18,6 +29,20 @@ const UserController = {
             //  });
         }
     },
+    async confirm(req,res){
+        try {
+          const token = req.params.emailToken
+          const payload = jwt.verify(token,jwt_secret)
+          const user = await User.findOne({
+                email: payload.email,
+            });
+          const newUser= await User.findByIdAndUpdate(user._id,{active:true},{ new: true });
+          res.status(201).send( {msg:"User has been confirmed",newUser} );
+        } catch (error) {
+          console.error(error)
+          res.send("Error confirming user")
+        }
+      },    
     async getAll(req, res) {
         try {
             const users = await User.find({},{password:0});

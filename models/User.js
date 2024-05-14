@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, "Please fullfil your birthday date"],
     },
     avatarPath:{type:String},
+    active:{type:Boolean, default:false},
     tokens:[],
 }, { timestamps: true });
 
