@@ -24,9 +24,10 @@ const UserSchema = new mongoose.Schema(
         },
         avatarPath: { type: String },
         tokens: [],
-    },
-    { timestamps: true },
-);
+    avatarPath:{type:String},
+    active:{type:Boolean, default:false},
+    tokens:[],
+  }, { timestamps: true });
 
 const User = mongoose.model("User", UserSchema);
 

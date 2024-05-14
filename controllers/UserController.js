@@ -2,21 +2,25 @@ const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { jwt_secret } = require("../config/keys.js");
+const transporter = require("../config/nodemailer");
+
 
 const UserController = {
     async create(req, res, next) {
         const file = req.file != undefined ? req.file : { path: false };
         try {
-            const password = bcrypt.hashSync(req.body.password, 10);
-            const user = await User.create({
-                ...req.body,
-                password: password,
-                avatarPath: file.path,
-            });
-            res.status(201).send({
-                msg: "New user created",
-                user: { ...user._doc, password: "*******" },
-            });
+            const password = bcrypt.hashSync(req.body.password,10)
+            const user = await User.create({...req.body, password:password,avatarPath:file.path});
+            const emailToken = jwt.sign({email:req.body.email},jwt_secret,{expiresIn:'48h'})
+            const url = 'http://localhost:8080/users/confirm/'+ emailToken
+            await transporter.sendMail({
+                to: req.body.email,
+                subject: "Confirme su registro",
+                html: `<h3> Bienvenido, estás a un paso de registrarte </h3>
+                <a href="${url}"> Clica para confirmar tu registro</a>
+                `,
+              });
+            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});        
         } catch (error) {
             console.error(error);
             next(error);
@@ -25,6 +29,20 @@ const UserController = {
             //  });
         }
     },
+    async confirm(req,res){
+        try {
+          const token = req.params.emailToken
+          const payload = jwt.verify(token,jwt_secret)
+          const user = await User.findOne({
+                email: payload.email,
+            });
+          const newUser= await User.findByIdAndUpdate(user._id,{active:true},{ new: true });
+          res.status(201).send( {msg:"User has been confirmed",newUser} );
+        } catch (error) {
+          console.error(error)
+          res.send("Error confirming user")
+        }
+      },    
     async getAll(req, res) {
         try {
             const users = await User.find({}, { password: 0 });
@@ -56,31 +74,15 @@ const UserController = {
             res.send({ msg: "User not found " });
         }
     },
-    //not working
     async getLoggedUserData(req, res) {
-        const token = req.params.token;
-        try {
-            const payload = jwt.verify(token, jwt_secret);
-            const user = await User.findOne({
-                _id: payload._id,
-                tokens: token,
-            });
-            res.send({
-                msg: "Logged user data  ",
-                user: { ...user._doc, password: "******" },
-            });
-        } catch (error) {
-            console.error(error);
-            res.send({ msg: "Token expired " });
-        }
+        res.send({ msg: "Logged user data", user:{...req.user._doc,password:"******",tokens:0} });
     },
     async logout(req, res) {
-        const UserId = req.params.id;
+        const UserId = req.user._id;
         const token = req.headers.authorization;
         try {
             const user = await User.findOne({
-                _id: UserId,
-                tokens: token,
+                _id: UserId
             });
             await User.findByIdAndUpdate(UserId, {
                 $pull: { tokens: token },
