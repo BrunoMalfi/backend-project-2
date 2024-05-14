@@ -13,8 +13,11 @@ const CommentController = {
                 postId: post,
                 author: user.name,
             });
+            await User.findByIdAndUpdate(req.user._id, {
+                $push: { commentsIds: comment._id },
+            });
 
-            res.status(201).send({ comment });
+            res.status(201).send({ user });
         } catch (error) {
             return console.log(error);
         }
@@ -93,6 +96,24 @@ const CommentController = {
             console.error(error);
             res.status(500).send({
                 message: "There was a problem with your like",
+            });
+        }
+    },
+    async update(req, res) {
+        try {
+            const file = req.file;
+            const comment = await Comment.findByIdAndUpdate(
+                req.params._id,
+                req.body,
+                {
+                    new: true,
+                },
+            );
+            res.status(200).send({ msg: "Comment uptaded", comment, file });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send({
+                message: "There was an issue updating the post",
             });
         }
     },

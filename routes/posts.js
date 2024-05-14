@@ -7,7 +7,13 @@ const { authentication, isAuthor } = require("../middleware/authentication");
 router.post("/", imageLoad, authentication, PostController.create);
 router.get("/", PostController.getAll);
 router.get("/id/:_id", authentication, PostController.getById);
-router.put("/id/:_id", imageLoad, authentication, PostController.update);
+router.put(
+    "/id/:_id",
+    imageLoad,
+    authentication,
+    isAuthor,
+    PostController.update,
+);
 router.put("/like/:_id", authentication, PostController.like);
 
 router.get("/total", PostController.count);

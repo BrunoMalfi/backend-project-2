@@ -1,4 +1,6 @@
 const User = require("../models/User.js");
+const Post = require("../models/Post.js");
+const Comment = require("../models/Comment.js");
 const jwt = require("jsonwebtoken");
 const { jwt_secret } = require("../config/keys.js");
 
@@ -31,9 +33,25 @@ const isAdmin = async (req, res, next) => {
 
 const isAuthor = async (req, res, next) => {
     try {
-        const order = await Order.findById(req.params._id);
-        if (order.userId.toString() !== req.user._id.toString()) {
-            return res.status(403).send({ message: "Este pedido no es tuyo" });
+        const post = await Post.findById(req.params._id);
+        if (post.userId.toString() !== req.user._id.toString()) {
+            return res.status(403).send({ message: "Este post no es tuyo" });
+        }
+        next();
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({
+            error,
+            message: "Ha habido un problema al comprobar la autoría del pedido",
+        });
+    }
+};
+const isCommentAuthor = async (req, res, next) => {
+    try {
+        const comment = await Comment.findById(req.params._id);
+
+        if (comment.userId.toString() !== req.user._id.toString()) {
+            return res.status(403).send({ message: "Este post no es tuyo" });
         }
         next();
     } catch (error) {
@@ -45,4 +63,4 @@ const isAuthor = async (req, res, next) => {
     }
 };
 
-module.exports = { authentication, isAuthor };
+module.exports = { authentication, isAuthor, isCommentAuthor };
