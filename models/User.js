@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema(
     {
@@ -24,17 +25,16 @@ const UserSchema = new mongoose.Schema(
         },
         avatarPath: { type: String },
         tokens: [],
-
-        postIds: [
-            {
-                type: ObjectId,
-                ref: "Post",
-            },
-        ],
         commentsIds: [
             {
                 type: ObjectId,
                 ref: "Comment",
+            },
+        ],
+        postIds: [
+            {
+                type: ObjectId,
+                ref: "Post",
             },
         ],
     },

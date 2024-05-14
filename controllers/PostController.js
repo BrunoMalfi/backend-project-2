@@ -11,6 +11,9 @@ const PostController = {
                 // file: file.path,
                 userId: user._id,
             });
+            await User.findByIdAndUpdate(req.user._id, {
+                $push: { postIds: post._id },
+            });
 
             res.status(201).send(post);
         } catch (error) {
