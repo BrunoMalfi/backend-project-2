@@ -16,7 +16,7 @@ const UserController = {
             await transporter.sendMail({
                 to: req.body.email,
                 subject: "Confirme su registro",
-                html: `<h3> Bienvenido, estás a un paso de registrarte </h3>
+                html: `<h3> Bienvenido ${user.name}, estás a un paso de registrarte </h3>
                 <a href="${url}"> Clica para confirmar tu registro</a>
                 `,
               });
