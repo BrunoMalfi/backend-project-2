@@ -37,7 +37,7 @@ const UserController = {
                 email: payload.email,
             });
           const newUser= await User.findByIdAndUpdate(user._id,{active:true},{ new: true });
-          res.status(201).send( {msg:"User has been confirmed",newUser} );
+          res.status(201).send( "User has been confirmed. Wellcome "+ newUser.name);
         } catch (error) {
           console.error(error)
           res.send("Error confirming user")
@@ -63,6 +63,9 @@ const UserController = {
             );
             if (!isMatch) {
                 return res.status(400).send({ msg: "Wrong usser or Password" });
+            }
+            if(!user.active){
+                return res.status(400).send({message:"Please, confirm first your e-mail direction and then try to login"})
             }
             const token = jwt.sign({ _id: user._id }, jwt_secret);
             if (user.tokens.length > 4) user.tokens.shift();
