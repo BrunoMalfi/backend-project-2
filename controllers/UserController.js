@@ -20,7 +20,7 @@ const UserController = {
                 <a href="${url}"> Clica para confirmar tu registro</a>
                 `,
               });
-            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});        
+            res.status(201).send({msg : "New user created", user});        
         } catch (error) {
             console.error(error);
             next(error);
@@ -45,7 +45,7 @@ const UserController = {
       },    
     async getAll(req, res) {
         try {
-            const users = await User.find({}, { password: 0 });
+            const users = await User.find();
             res.send({ msg: "Users list : ", users });
         } catch (error) {
             console.error(error);
@@ -78,7 +78,7 @@ const UserController = {
         }
     },
     async getLoggedUserData(req, res) {
-        res.send({ msg: "Logged user data", user:{...req.user._doc,password:"******",tokens:0} });
+        res.send({ msg: "Logged user data",user:req.user});
     },
     async logout(req, res) {
         const UserId = req.user._id;
@@ -102,7 +102,7 @@ const UserController = {
                 return res.status(400).send("Name to long");
             }
             const name = new RegExp(req.params.name, "i");
-            const user = await User.find({ name }, { password: 0, tokens: 0 });
+            const user = await User.find({ name });
             if (user.length == 0) {
                 res.send({
                     msg: "User with name " + req.params.name + " not found",
@@ -133,8 +133,8 @@ const UserController = {
             );
             res.send({
                 msg: "User successfully updated",
-                oldUser: { ...oldUser._doc, password: "******" },
-                newUser: { ...newUser._doc, password: "******" },
+                oldUser,
+                newUser,
             });
         } catch (error) {
             console.error(error);
@@ -143,10 +143,7 @@ const UserController = {
     },
     async getUserById(req, res) {
         try {
-            const user = await User.findById(req.params.id, {
-                password: 0,
-                tokens: 0,
-            });
+            const user = await User.findById(req.params.id);
             res.send({ msg: "User:", user });
         } catch (error) {
             console.error(error);
