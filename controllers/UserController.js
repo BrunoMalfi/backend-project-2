@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
-const { jwt_secret } = process.env;
+const { JWT_SECRET } = process.env;
 const transporter = require("../config/nodemailer");
 
 const UserController = {
@@ -16,7 +16,7 @@ const UserController = {
                 password: password,
                 avatarPath: file.path,
             });
-            const emailToken = jwt.sign({ email: req.body.email }, jwt_secret, {
+            const emailToken = jwt.sign({ email: req.body.email }, JWT_SECRET, {
                 expiresIn: "48h",
             });
             const url = "http://localhost:8080/users/confirm/" + emailToken;
@@ -40,7 +40,7 @@ const UserController = {
     async confirm(req, res) {
         try {
             const token = req.params.emailToken;
-            const payload = jwt.verify(token, jwt_secret);
+            const payload = jwt.verify(token, JWT_SECRET);
             const user = await User.findOne({
                 email: payload.email,
             });
@@ -86,7 +86,7 @@ const UserController = {
                             "Please, confirm first your e-mail direction and then try to login",
                     });
             }
-            const token = jwt.sign({ _id: user._id }, jwt_secret);
+            const token = jwt.sign({ _id: user._id }, JWT_SECRET);
             if (user.tokens.length > 4) user.tokens.shift();
             user.tokens.push(token);
             await user.save();
@@ -173,7 +173,7 @@ const UserController = {
         try {
             const recoverToken = jwt.sign(
                 { email: req.params.email },
-                jwt_secret,
+                JWT_SECRET,
                 {
                     expiresIn: "48h",
                 },
@@ -197,7 +197,7 @@ const UserController = {
     async resetPassword(req, res) {
         try {
             const recoverToken = req.params.recoverToken;
-            const payload = jwt.verify(recoverToken, jwt_secret);
+            const payload = jwt.verify(recoverToken, JWT_SECRET);
             const password = bcrypt.hashSync(req.body.password, 10);
             const userUpdated = await User.findOneAndUpdate(
                 { email: payload.email },
