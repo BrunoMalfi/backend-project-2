@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
-const PORT = 8080;
+require("dotenv").config();
+const PORT = process.env.PORT || 8080;
 const { dbConnection } = require("./config/config");
+const cors = require("cors");
 
 const { handleTypeError } = require("./middleware/errors");
 
