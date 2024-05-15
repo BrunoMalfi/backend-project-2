@@ -1,18 +1,25 @@
 const User = require("../models/User.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { jwt_secret } = require("../config/keys.js");
-const transporter = require("../config/nodemailer");
+require("dotenv").config();
 
+const { jwt_secret } = process.env;
+const transporter = require("../config/nodemailer");
 
 const UserController = {
     async create(req, res, next) {
         const file = req.file != undefined ? req.file : { path: false };
         try {
-            const password = bcrypt.hashSync(req.body.password,10)
-            const user = await User.create({...req.body, password:password,avatarPath:file.path});
-            const emailToken = jwt.sign({email:req.body.email},jwt_secret,{expiresIn:'48h'})
-            const url = 'http://localhost:8080/users/confirm/'+ emailToken
+            const password = bcrypt.hashSync(req.body.password, 10);
+            const user = await User.create({
+                ...req.body,
+                password: password,
+                avatarPath: file.path,
+            });
+            const emailToken = jwt.sign({ email: req.body.email }, jwt_secret, {
+                expiresIn: "48h",
+            });
+            const url = "http://localhost:8080/users/confirm/" + emailToken;
             await transporter.sendMail({
                 to: req.body.email,
                 subject: "Activate your account",
@@ -20,8 +27,8 @@ const UserController = {
                 <a href="${url}">link</a>
                 <p>This link will expire in 48 hours</p>
                 `,
-              });
-            res.status(201).send({msg : "New user created", user});        
+            });
+            res.status(201).send({ msg: "New user created", user });
         } catch (error) {
             console.error(error);
             next(error);
@@ -30,20 +37,26 @@ const UserController = {
             //  });
         }
     },
-    async confirm(req,res){
+    async confirm(req, res) {
         try {
-          const token = req.params.emailToken
-          const payload = jwt.verify(token,jwt_secret)
-          const user = await User.findOne({
+            const token = req.params.emailToken;
+            const payload = jwt.verify(token, jwt_secret);
+            const user = await User.findOne({
                 email: payload.email,
             });
-          const newUser= await User.findByIdAndUpdate(user._id,{active:true},{ new: true });
-          res.status(201).send( "User has been confirmed. Wellcome "+ newUser.name);
+            const newUser = await User.findByIdAndUpdate(
+                user._id,
+                { active: true },
+                { new: true },
+            );
+            res.status(201).send(
+                "User has been confirmed. Wellcome " + newUser.name,
+            );
         } catch (error) {
-          console.error(error)
-          res.send("Error confirming user")
+            console.error(error);
+            res.send("Error confirming user");
         }
-      },    
+    },
     async getAll(req, res) {
         try {
             const users = await User.find();
@@ -65,8 +78,13 @@ const UserController = {
             if (!isMatch) {
                 return res.status(400).send({ msg: "Wrong usser or Password" });
             }
-            if(!user.active){
-                return res.status(400).send({message:"Please, confirm first your e-mail direction and then try to login"})
+            if (!user.active) {
+                return res
+                    .status(400)
+                    .send({
+                        message:
+                            "Please, confirm first your e-mail direction and then try to login",
+                    });
             }
             const token = jwt.sign({ _id: user._id }, jwt_secret);
             if (user.tokens.length > 4) user.tokens.shift();
@@ -79,14 +97,14 @@ const UserController = {
         }
     },
     async getLoggedUserData(req, res) {
-        res.send({ msg: "Logged user data",user:req.user});
+        res.send({ msg: "Logged user data", user: req.user });
     },
     async logout(req, res) {
         const UserId = req.user._id;
         const token = req.headers.authorization;
         try {
             const user = await User.findOne({
-                _id: UserId
+                _id: UserId,
             });
             await User.findByIdAndUpdate(UserId, {
                 $pull: { tokens: token },
@@ -153,39 +171,44 @@ const UserController = {
     },
     async recoverPassword(req, res) {
         try {
-          const recoverToken = jwt.sign({ email: req.params.email }, jwt_secret, {
-            expiresIn: "48h",
-          });
-          const url = "http://localhost:3000/users/resetPassword/" + recoverToken;
-          await transporter.sendMail({
-            to: req.params.email,
-            subject: "Password reset",
-            html: `<h3> Pasword reset </h3>
+            const recoverToken = jwt.sign(
+                { email: req.params.email },
+                jwt_secret,
+                {
+                    expiresIn: "48h",
+                },
+            );
+            const url =
+                "http://localhost:3000/users/resetPassword/" + recoverToken;
+            await transporter.sendMail({
+                to: req.params.email,
+                subject: "Password reset",
+                html: `<h3> Pasword reset </h3>
                     <a href="${url}">Reset password link</a>
                     <p>This link will expire in 48 hours</p>`,
-          });
-          res.send({
-            msg: "Reset password e-mail sent",
-          });
+            });
+            res.send({
+                msg: "Reset password e-mail sent",
+            });
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
-      },
-      async resetPassword(req, res) {
+    },
+    async resetPassword(req, res) {
         try {
-          const recoverToken = req.params.recoverToken;
-          const payload = jwt.verify(recoverToken, jwt_secret);
-          const password = bcrypt.hashSync(req.body.password, 10);
-          const userUpdated= await User.findOneAndUpdate(
-            { email: payload.email },
-            { password}
-          );
-          res.send({ msg: "Password from user "+userUpdated.name+" updated" });
+            const recoverToken = req.params.recoverToken;
+            const payload = jwt.verify(recoverToken, jwt_secret);
+            const password = bcrypt.hashSync(req.body.password, 10);
+            const userUpdated = await User.findOneAndUpdate(
+                { email: payload.email },
+                { password },
+            );
+            res.send({
+                msg: "Password from user " + userUpdated.name + " updated",
+            });
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
-      },
-    
-    
+    },
 };
 module.exports = UserController;

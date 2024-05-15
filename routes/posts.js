@@ -15,6 +15,7 @@ router.put(
     PostController.update,
 );
 router.put("/like/:_id", authentication, PostController.like);
+router.put("/unlike/:_id", authentication, PostController.unlike);
 
 router.get("/total", PostController.count);
 router.get("/title/:title", PostController.getPostsBytitle);

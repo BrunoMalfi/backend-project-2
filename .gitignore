@@ -3,3 +3,5 @@ keys.js
 uploads/*
 nodemailer.js
 DS_Store
+test/*
+.env
