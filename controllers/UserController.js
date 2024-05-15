@@ -15,9 +15,10 @@ const UserController = {
             const url = 'http://localhost:8080/users/confirm/'+ emailToken
             await transporter.sendMail({
                 to: req.body.email,
-                subject: "Confirme su registro",
-                html: `<h3> Bienvenido ${user.name}, estás a un paso de registrarte </h3>
-                <a href="${url}"> Clica para confirmar tu registro</a>
+                subject: "Activate your account",
+                html: `<h3> Hi  ${user.name}, </h3><p> Thank you for signing up for Render. Click on the link below to verify your email:</p> 
+                <a href="${url}">link</a>
+                <p>This link will expire in 48 hours</p>
                 `,
               });
             res.status(201).send({msg : "New user created", user});        
@@ -150,5 +151,41 @@ const UserController = {
             res.send({ msg: "user with Id: " + req.params.id + " not found" });
         }
     },
+    async recoverPassword(req, res) {
+        try {
+          const recoverToken = jwt.sign({ email: req.params.email }, jwt_secret, {
+            expiresIn: "48h",
+          });
+          const url = "http://localhost:3000/users/resetPassword/" + recoverToken;
+          await transporter.sendMail({
+            to: req.params.email,
+            subject: "Password reset",
+            html: `<h3> Pasword reset </h3>
+                    <a href="${url}">Reset password link</a>
+                    <p>This link will expire in 48 hours</p>`,
+          });
+          res.send({
+            msg: "Reset password e-mail sent",
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      async resetPassword(req, res) {
+        try {
+          const recoverToken = req.params.recoverToken;
+          const payload = jwt.verify(recoverToken, jwt_secret);
+          const password = bcrypt.hashSync(req.body.password, 10);
+          const userUpdated= await User.findOneAndUpdate(
+            { email: payload.email },
+            { password}
+          );
+          res.send({ msg: "Password from user "+userUpdated.name+" updated" });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+    
+    
 };
 module.exports = UserController;

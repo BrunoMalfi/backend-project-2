@@ -13,6 +13,9 @@ router.delete("/logout",authentication,UserController.logout);
 router.get("/getuserbyname/:name", UserController.getUserByName);
 router.put("/updateuserbyid/:id",authentication,imageLoad,UserController.updateUserById);
 router.get("/getuserbyid/:id",UserController.getUserById);
+router.get('/recoverpassowrd/:email',UserController.recoverPassword);
+router.put('/resetPassword/:recoverToken',UserController.resetPassword)
+
 
 
 
