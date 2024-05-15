@@ -15,12 +15,13 @@ const UserController = {
             const url = 'http://localhost:8080/users/confirm/'+ emailToken
             await transporter.sendMail({
                 to: req.body.email,
-                subject: "Confirme su registro",
-                html: `<h3> Bienvenido ${user.name}, estás a un paso de registrarte </h3>
-                <a href="${url}"> Clica para confirmar tu registro</a>
+                subject: "Activate your account",
+                html: `<h3> Hi  ${user.name}, </h3><p> Thank you for signing up for Render. Click on the link below to verify your email:</p> 
+                <a href="${url}">link</a>
+                <p>This link will expire in 48 hours</p>
                 `,
               });
-            res.status(201).send({msg : "New user created", user:{...user._doc,password:"*******"}});        
+            res.status(201).send({msg : "New user created", user});        
         } catch (error) {
             console.error(error);
             next(error);
@@ -37,7 +38,7 @@ const UserController = {
                 email: payload.email,
             });
           const newUser= await User.findByIdAndUpdate(user._id,{active:true},{ new: true });
-          res.status(201).send( {msg:"User has been confirmed",newUser} );
+          res.status(201).send( "User has been confirmed. Wellcome "+ newUser.name);
         } catch (error) {
           console.error(error)
           res.send("Error confirming user")
@@ -45,7 +46,7 @@ const UserController = {
       },    
     async getAll(req, res) {
         try {
-            const users = await User.find({}, { password: 0 });
+            const users = await User.find();
             res.send({ msg: "Users list : ", users });
         } catch (error) {
             console.error(error);
@@ -64,6 +65,9 @@ const UserController = {
             if (!isMatch) {
                 return res.status(400).send({ msg: "Wrong usser or Password" });
             }
+            if(!user.active){
+                return res.status(400).send({message:"Please, confirm first your e-mail direction and then try to login"})
+            }
             const token = jwt.sign({ _id: user._id }, jwt_secret);
             if (user.tokens.length > 4) user.tokens.shift();
             user.tokens.push(token);
@@ -75,7 +79,7 @@ const UserController = {
         }
     },
     async getLoggedUserData(req, res) {
-        res.send({ msg: "Logged user data", user:{...req.user._doc,password:"******",tokens:0} });
+        res.send({ msg: "Logged user data",user:req.user});
     },
     async logout(req, res) {
         const UserId = req.user._id;
@@ -99,7 +103,7 @@ const UserController = {
                 return res.status(400).send("Name to long");
             }
             const name = new RegExp(req.params.name, "i");
-            const user = await User.find({ name }, { password: 0, tokens: 0 });
+            const user = await User.find({ name });
             if (user.length == 0) {
                 res.send({
                     msg: "User with name " + req.params.name + " not found",
@@ -130,8 +134,8 @@ const UserController = {
             );
             res.send({
                 msg: "User successfully updated",
-                oldUser: { ...oldUser._doc, password: "******" },
-                newUser: { ...newUser._doc, password: "******" },
+                oldUser,
+                newUser,
             });
         } catch (error) {
             console.error(error);
@@ -140,15 +144,48 @@ const UserController = {
     },
     async getUserById(req, res) {
         try {
-            const user = await User.findById(req.params.id, {
-                password: 0,
-                tokens: 0,
-            });
+            const user = await User.findById(req.params.id);
             res.send({ msg: "User:", user });
         } catch (error) {
             console.error(error);
             res.send({ msg: "user with Id: " + req.params.id + " not found" });
         }
     },
+    async recoverPassword(req, res) {
+        try {
+          const recoverToken = jwt.sign({ email: req.params.email }, jwt_secret, {
+            expiresIn: "48h",
+          });
+          const url = "http://localhost:3000/users/resetPassword/" + recoverToken;
+          await transporter.sendMail({
+            to: req.params.email,
+            subject: "Password reset",
+            html: `<h3> Pasword reset </h3>
+                    <a href="${url}">Reset password link</a>
+                    <p>This link will expire in 48 hours</p>`,
+          });
+          res.send({
+            msg: "Reset password e-mail sent",
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      async resetPassword(req, res) {
+        try {
+          const recoverToken = req.params.recoverToken;
+          const payload = jwt.verify(recoverToken, jwt_secret);
+          const password = bcrypt.hashSync(req.body.password, 10);
+          const userUpdated= await User.findOneAndUpdate(
+            { email: payload.email },
+            { password}
+          );
+          res.send({ msg: "Password from user "+userUpdated.name+" updated" });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+    
+    
 };
 module.exports = UserController;
