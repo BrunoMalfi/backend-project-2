@@ -1,14 +1,14 @@
 const Post = require("../models/Post.js");
 const User = require("../models/User.js");
 const PostController = {
-    async create(req, res) {
+    async create(req, res, next) {
         try {
             const file = req.file;
             const user = req.user;
 
             const post = await Post.create({
                 ...req.body,
-                // file: file.path,
+                file: file.path,
                 userId: user._id,
             });
             await User.findByIdAndUpdate(req.user._id, {
@@ -17,7 +17,7 @@ const PostController = {
 
             res.status(201).send(post);
         } catch (error) {
-            res.send(error);
+            next(error);
         }
     },
     async getAll(req, res) {
@@ -49,7 +49,7 @@ const PostController = {
             });
         }
     },
-    async update(req, res) {
+    async update(req, res, next) {
         try {
             const file = req.file;
             const post = await Post.findByIdAndUpdate(
@@ -61,10 +61,8 @@ const PostController = {
             );
             res.status(200).send({ msg: "Post uptaded", post, file });
         } catch (error) {
-            console.error(error);
-            res.status(500).send({
-                message: "There was an issue updating the post",
-            });
+            log.error(error);
+            next(error);
         }
     },
     async delete(req, res) {

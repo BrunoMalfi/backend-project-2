@@ -50,6 +50,8 @@ Asegúrate de consultar la documentación de los endpoints para obtener informac
 
 ## Autores 🎉
 
+# Primera fila Izquierda
+
 ![alt text](image-1.png)
 
 -   Bruno Malfi [@BrunoMalfi](https://github.com/BrunoMalfi)
