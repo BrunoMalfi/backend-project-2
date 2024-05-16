@@ -17,7 +17,7 @@ const PostController = {
 
             res.status(201).send(post);
         } catch (error) {
-            // next(error);
+            next(error);
         }
     },
     async getAll(req, res) {
@@ -28,11 +28,11 @@ const PostController = {
                 .populate("userId", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
-            res.send(posts);
+            res.send({ msg: "posts:", posts });
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "There was an issue finding the posts",
+                msg: "There was an issue finding the posts",
             });
         }
     },
@@ -45,7 +45,7 @@ const PostController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: `There was an issue finding the post with id ${req.params._id}`,
+                msg: `There was an issue finding the post with id ${req.params._id}`,
             });
         }
     },
@@ -68,11 +68,11 @@ const PostController = {
     async delete(req, res) {
         try {
             const post = await Post.findByIdAndDelete(req.params._id);
-            res.send({ message: "Post deleted", post });
+            res.send({ msg: "Post deleted", post });
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "there was a problem trying to remove the post",
+                msg: "there was a problem trying to remove the post",
             });
         }
     },
@@ -87,7 +87,7 @@ const PostController = {
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                message: `There was an issue finding the post with title ${req.params.title} `,
+                msg: `There was an issue finding the post with title ${req.params.title} `,
             });
         }
     },
@@ -97,7 +97,7 @@ const PostController = {
             res.status(200).send({ msg: `actualmente hay ${count} posts ` });
         } catch (error) {
             res.status(500).send({
-                message: "There was an issue counting the posts",
+                msg: "There was an issue counting the posts",
             });
         }
     },
@@ -120,7 +120,7 @@ const PostController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "There was a problem with your like",
+                msg: "There was a problem with your like",
                 error,
             });
         }
@@ -144,7 +144,7 @@ const PostController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "There was a problem with your like",
+                msg: "There was a problem with your like",
                 error,
             });
         }

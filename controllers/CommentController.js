@@ -3,7 +3,7 @@ const Post = require("../models/Post.js");
 const User = require("../models/User.js");
 
 const CommentController = {
-    async create(req, res) {
+    async create(req, res, next) {
         try {
             const user = req.user;
             const post = req.params.postId;
@@ -11,20 +11,25 @@ const CommentController = {
                 ...req.body,
                 userId: user._id,
                 postId: post,
-                author: user.name,
             });
             await User.findByIdAndUpdate(req.user._id, {
+                $push: { commentsIds: comment._id },
+            });
+            await Post.findByIdAndUpdate(post, {
                 $push: { commentsIds: comment._id },
             });
 
             res.status(201).send({ msg: "your comment:", comment });
         } catch (error) {
-            return console.log(error);
+            next(error);
         }
     },
     async getAll(req, res) {
         try {
-            const comments = await Comment.find().populate("userId");
+            const comments = await Comment.find().populate(
+                "userId",
+                (select = "name"),
+            );
 
             res.status(201).send(comments);
         } catch (error) {
@@ -40,7 +45,7 @@ const CommentController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "there was a problem trying to remove the comment",
+                msg: "there was a problem trying to remove the comment",
             });
         }
     },
@@ -49,23 +54,6 @@ const CommentController = {
             const comment = await Comment.findById(req.params._id);
             res.status(201).send(comment);
         } catch (error) {
-            res.send(500).send({
-                msg: "There was a problem trying to get the comments",
-            });
-        }
-    },
-    async getbyuser(req, res) {
-        try {
-            const user = req.params.user;
-            const comments = await Comment.find({
-                $text: {
-                    $search: user,
-                },
-            });
-
-            res.status(201).send({ msg: `comments of ${user}: `, comments });
-        } catch (error) {
-            console.error(error);
             res.send(500).send({
                 msg: "There was a problem trying to get the comments",
             });
@@ -92,7 +80,7 @@ const CommentController = {
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "There was a problem with your like",
+                msg: "There was a problem with your like",
                 error,
             });
         }
@@ -105,6 +93,7 @@ const CommentController = {
             const comment = await Comment.findById(commentId);
             const liked = comment.likes.includes(userId);
             if (!liked) {
+                console.log(liked);
                 return res.status(400).send("There is no like on this comment");
             }
             const likedComment = await Comment.findByIdAndUpdate(
@@ -112,31 +101,26 @@ const CommentController = {
                 { $pull: { likes: userId } },
                 { new: true },
             );
+            console.log(liked);
+
             res.send(likedComment);
         } catch (error) {
             console.error(error);
             res.status(500).send({
-                message: "There was a problem with your like",
+                msg: "There was a problem with your like",
                 error,
             });
         }
     },
-    async update(req, res) {
+    async update(req, res, next) {
         try {
-            const file = req.file;
-            const comment = await Comment.findByIdAndUpdate(
-                req.params._id,
-                req.body,
-                {
-                    new: true,
-                },
-            );
-            res.status(200).send({ msg: "Comment uptaded", comment, file });
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({
-                message: "There was an issue updating the post",
+            // const file = req.file;
+            const comment = await Comment.findByIdAndUpdate(req.params._id, {
+                new: true,
             });
+            res.status(200).send({ msg: "Comment uptaded", comment });
+        } catch (error) {
+            next(error);
         }
     },
 };
