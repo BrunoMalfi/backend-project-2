@@ -97,7 +97,10 @@ const UserController = {
         }
     },
     async getLoggedUserData(req, res) {
-        res.send({ msg: "Logged user data", user: req.user });
+        const user = await User.findById(req.user._id)
+        .populate("commentsIds")
+        .populate("postIds")
+        res.send({ msg: "Logged user data", user });
     },
     async logout(req, res) {
         const UserId = req.user._id;
