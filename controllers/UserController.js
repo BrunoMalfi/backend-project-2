@@ -210,5 +210,31 @@ const UserController = {
             console.error(error);
         }
     },
+    async followUserById(req, res, next) {
+        try{
+            const userToFollow = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $push: { followersIds: req.user._id },
+                },
+                { new: true },
+            );
+            const userFollower = await User.findByIdAndUpdate(
+                req.user._id,
+                {
+                    $push: { followingListIds: req.params.id },
+                },
+                { new: true },
+            );
+            res.send({
+                msg: "User " + userFollower.name + " is now following " + userToFollow.name ,
+                userToFollow,
+                userFollower
+            });
+        }catch(error){
+            console.error(error);
+        }
+        
+    },
 };
 module.exports = UserController;

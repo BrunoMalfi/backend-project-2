@@ -43,6 +43,18 @@ const UserSchema = new mongoose.Schema(
                 ref: "Post",
             },
         ],
+        followersIds: [
+            {
+                type: ObjectId,
+                ref: "User",
+            },
+        ],
+        followingListIds: [
+            {
+                type: ObjectId,
+                ref: "User",
+            },
+        ],
     },
     { timestamps: true },
 );
