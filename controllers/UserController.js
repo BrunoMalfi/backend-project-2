@@ -97,7 +97,10 @@ const UserController = {
         }
     },
     async getLoggedUserData(req, res) {
-        res.send({ msg: "Logged user data", user: req.user });
+        const user = await User.findById(req.user._id)
+        .populate("commentsIds")
+        .populate("postIds")
+        res.send({ msg: "Logged user data", user });
     },
     async logout(req, res) {
         const UserId = req.user._id;
@@ -209,6 +212,32 @@ const UserController = {
         } catch (error) {
             console.error(error);
         }
+    },
+    async followUserById(req, res, next) {
+        try{
+            const userToFollow = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $push: { followersIds: req.user._id },
+                },
+                { new: true },
+            );
+            const userFollower = await User.findByIdAndUpdate(
+                req.user._id,
+                {
+                    $push: { followingListIds: req.params.id },
+                },
+                { new: true },
+            );
+            res.send({
+                msg: "User " + userFollower.name + " is now following " + userToFollow.name ,
+                userToFollow,
+                userFollower
+            });
+        }catch(error){
+            console.error(error);
+        }
+        
     },
 };
 module.exports = UserController;
