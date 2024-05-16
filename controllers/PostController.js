@@ -17,7 +17,7 @@ const PostController = {
 
             res.status(201).send(post);
         } catch (error) {
-            next(error);
+            // next(error);
         }
     },
     async getAll(req, res) {

@@ -50,7 +50,8 @@ const isCommentAuthorOrAdmin = async (req, res, next) => {
         console.error(error);
         return res.status(500).send({
             error,
-            message: "Ha habido un problema al comprobar la autoría del post",
+            message:
+                "Ha habido un problema al comprobar la autoría del comment",
         });
     }
 };

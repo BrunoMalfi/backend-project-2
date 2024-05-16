@@ -10,7 +10,13 @@ const {
 router.post("/", imageLoad, authentication, PostController.create);
 router.get("/", PostController.getAll);
 router.get("/id/:_id", PostController.getById);
-router.put("/id/:_id", imageLoad, authentication, PostController.update);
+router.put(
+    "/id/:_id",
+    imageLoad,
+    authentication,
+    isAuthorOrAdmin,
+    PostController.update,
+);
 router.put("/like/:_id", authentication, PostController.like);
 router.put("/unlike/:_id", authentication, PostController.unlike);
 
