@@ -17,7 +17,7 @@ const CommentController = {
                 $push: { commentsIds: comment._id },
             });
 
-            res.status(201).send({ user });
+            res.status(201).send({ msg: "your comment:", comment });
         } catch (error) {
             return console.log(error);
         }
