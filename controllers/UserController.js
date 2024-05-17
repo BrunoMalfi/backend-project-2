@@ -241,5 +241,31 @@ const UserController = {
         }
         
     },
+    async unFollowUserById(req, res, next) {
+        try{
+            const userToUnFollow = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $pull: { followersIds: req.user._id },
+                },
+                { new: true },
+            );
+            const userUnFollower = await User.findByIdAndUpdate(
+                req.user._id,
+                {
+                    $pull: { followingListIds: req.params.id },
+                },
+                { new: true },
+            );
+            res.send({
+                msg: "User " + userUnFollower.name + " is not following " + userToUnFollow.name +" any more" ,
+                userToUnFollow,
+                userUnFollower
+            });
+        }catch(error){
+            console.error(error);
+        }
+        
+    },
 };
 module.exports = UserController;
