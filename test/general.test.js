@@ -1,5 +1,9 @@
 const request = require("supertest");
 const app = require("../index.js");
+require("dotenv").config();
+const { JWT_SECRET } = process.env;
+
+const jwt = require("jsonwebtoken");
 let token;
 let userId;
 
@@ -16,6 +20,13 @@ describe("testing/users", () => {
             .send(user)
             .expect(201);
         expect(res.body.msg).toBeDefined();
+    });
+    test("Confirm a user", async () => {
+        const emailToken = jwt.sign({ email: user.email }, JWT_SECRET);
+        const res = await request(app)
+            .get("/users/confirm/" + emailToken)
+            .expect(201);
+        expect(res.text).toBeDefined();
     });
     test("Login a user", async () => {
         const res = await request(app)

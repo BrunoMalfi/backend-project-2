@@ -49,9 +49,7 @@ const UserController = {
                 { active: true },
                 { new: true },
             );
-            res.status(201).send(
-                "User has been confirmed. Wellcome " + newUser.name,
-            );
+            res.status(201).send("User has been confirmed. Wellcome");
         } catch (error) {
             console.error(error);
             res.send("Error confirming user");
