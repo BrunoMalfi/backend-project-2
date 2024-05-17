@@ -26,15 +26,14 @@
 -   **Jsonwebtoken**:es una biblioteca de JavaScript que permite la creación, firma y verificación de tokens de JSON Web Tokens (JWT), los cuales son utilizados para la autenticación y autorización en aplicaciones web y servicios API.
 -   **Bcryptjs**:Una biblioteca de JavaScript que proporciona funciones de hashing de contraseñas seguras utilizando el algoritmo bcrypt.
 -   **Nodemon**:Una herramienta de desarrollo para aplicaciones Node.js que reinicia automáticamente el servidor cuando detecta cambios en los archivos del proyecto, lo que facilita el proceso de desarrollo.
-
-Estas tecnologías y herramientas proporcionan una base sólida para construir una API robusta y escalable para tu aplicación de red social.
+-   **Render** :una plataforma de alojamiento en la nube que simplifica el despliegue de aplicaciones y servicios web. Ofrece escalabilidad automática, soporte para diversas tecnologías y una interfaz fácil de usar, facilitando la administración y el mantenimiento de proyectos en producción.
 
 ## La API
 
 Nuestra base de datos está diseñada para una red social y consta de tres colecciones principales: USERS, POST y COMMENTs.
 
 <p  align="center">
-<img src="red.jpg" width="400px" alt="Diagrama de la estructura de la base de datos" aling="center" >
+<img src="./readmeImg/red.jpg" width="400px" alt="Diagrama de la estructura de la base de datos" aling="center" >
 </p>
 En la colección POST, además del campo userId que indica quién ha creado la publicación, tenemos el campo commentsIds, que es una lista de IDs de los comentarios creados en el respectivo post.
 
@@ -48,11 +47,18 @@ Asegúrate de consultar la documentación de los endpoints para obtener informac
 
 ## Documentación 📊📊
 
+<p  align="center"> 
+<img src="./readmeImg/image.png" width="80%" alt="Diagrama de la estructura de la base de datos" aling="center" >
+</p>
+Hemos elaborado nuestra documentación utilizando Postman. En ella, se pueden encontrar todos los endpoints del servidor desplegado, disponible en la siguiente URL: [https://backend-project-2-dm29.onrender.com]
+
+https://documenter.getpostman.com/view/34760486/2sA3JNZzw4
+
 ## Autores 🎉
 
 # Primera fila Izquierda
 
-![alt text](image-1.png)
+![alt text](./readmeImg/image-1.png)
 
 -   Bruno Malfi [@BrunoMalfi](https://github.com/BrunoMalfi)
 
