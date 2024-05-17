@@ -1,5 +1,6 @@
 const request = require("supertest");
 const app = require("../index.js");
+const User = require("../models/User.js");
 require("dotenv").config();
 const { JWT_SECRET } = process.env;
 
@@ -8,6 +9,10 @@ let token;
 let userId;
 
 describe("testing/users", () => {
+    afterAll(() => {
+        return User.deleteMany();
+    });
+
     const user = {
         name: "user",
         email: "gmail@gmail.com",
@@ -34,5 +39,9 @@ describe("testing/users", () => {
             .send(user)
             .expect(200);
         token = res.body.token;
+    });
+    test("Get users", async () => {
+        const res = await request(app).get("/users").expect(200);
+        expect(res.body).toBeInstanceOf({});
     });
 });
