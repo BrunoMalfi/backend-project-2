@@ -24,7 +24,12 @@ const PostController = {
         try {
             const { page = 1, limit = 10 } = req.query;
             const posts = await Post.find()
-                .populate("commentsIds")
+                .populate({
+                    path: "commentsIds",
+                    populate: {
+                        path: "userId",
+                    },
+                })
                 .populate("userId", (select = "name"))
                 .limit(limit)
                 .skip((page - 1) * limit);
@@ -68,7 +73,12 @@ const PostController = {
     async delete(req, res) {
         try {
             const post = await Post.findByIdAndDelete(req.params._id);
-            res.send({ msg: "Post deleted", post });
+            await User.findByIdAndUpdate(
+                req.user._id,
+                { $pull: { postIds: req.params._id } },
+                { new: true },
+            );
+            res.send({ msg: "Post deleted" });
         } catch (error) {
             console.error(error);
             res.status(500).send({

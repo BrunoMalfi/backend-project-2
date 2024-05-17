@@ -40,7 +40,12 @@ const CommentController = {
     },
     async delete(req, res) {
         try {
-            await Post.findByIdAndDelete(req.params._id);
+            await Comment.findByIdAndDelete(req.params._id);
+            await User.findByIdAndUpdate(
+                req.user._id,
+                { $pull: { commentsIds: req.params._id } },
+                { new: true },
+            );
             res.send({ message: "Comment deleted" });
         } catch (error) {
             console.error(error);
