@@ -50,7 +50,7 @@ Asegúrate de consultar la documentación de los endpoints para obtener informac
 <p  align="center"> 
 <img src="./readmeImg/image.png" width="80%" alt="Diagrama de la estructura de la base de datos" aling="center" >
 </p>
-Hemos elaborado nuestra documentación utilizando Postman. En ella, se pueden encontrar todos los endpoints del servidor desplegado, disponible en la siguiente URL: [https://backend-project-2-dm29.onrender.com](https://backend-project-2-dm29.onrender.com).
+Hemos elaborado nuestra documentación utilizando Postman. En ella, se pueden encontrar todos los endpoints del servidor desplegado, disponible en la siguiente URL: [https://backend-project-2-dm29.onrender.com]
 
 https://documenter.getpostman.com/view/34760486/2sA3JNZzw4
 
