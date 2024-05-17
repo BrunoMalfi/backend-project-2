@@ -19,7 +19,7 @@ const UserController = {
             const emailToken = jwt.sign({ email: req.body.email }, JWT_SECRET, {
                 expiresIn: "48h",
             });
-            const url = DOMAIN+":"+PORT+"/users/confirm/" + emailToken;
+            const url = DOMAIN+"/users/confirm/" + emailToken;
             await transporter.sendMail({
                 to: req.body.email,
                 subject: "Activate your account",
