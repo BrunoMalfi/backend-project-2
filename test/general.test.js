@@ -1,15 +1,10 @@
 const request = require("supertest");
 const app = require("../index.js");
-<<<<<<< HEAD
-const jwt = require("jsonwebtoken");
-const { jwt_secret } = require("../config/config.json")["development"];
-=======
 const User = require("../models/User.js");
 require("dotenv").config();
 const { JWT_SECRET } = process.env;
 
 const jwt = require("jsonwebtoken");
->>>>>>> superdani
 let token;
 let userId;
 
@@ -40,9 +35,10 @@ describe("testing/users", () => {
     });
     test("Login a user", async () => {
         const res = await request(app)
-            .get("/users/confirm/" + emailToken)
-            .expect(201);
-        expect(res.text).toBe("Usuario confirmado con éxito");
+            .post("/users/login")
+            .send(user)
+            .expect(200);
+        token = res.body.token;
     });
     test("Get users", async () => {
         const res = await request(app).get("/users").expect(200);
