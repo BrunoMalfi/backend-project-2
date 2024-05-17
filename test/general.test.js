@@ -25,6 +25,7 @@ describe("testing/users", () => {
             .send(user)
             .expect(201);
         expect(res.body.msg).toBeDefined();
+        userId = res.body.user._id;
     });
     test("Confirm a user", async () => {
         const emailToken = jwt.sign({ email: user.email }, JWT_SECRET);
@@ -42,6 +43,15 @@ describe("testing/users", () => {
     });
     test("Get users", async () => {
         const res = await request(app).get("/users").expect(200);
-        expect(res.body).toBeInstanceOf({});
+        expect(res.body.users).toBeInstanceOf(Array);
+    });
+    test("Update a user record", async () => {
+        const updateUser = { name: "Updated name" };
+        const res = await request(app)
+            .put(`/updateuserbyid/${userId} `)
+            .send(updateUser)
+            .set({ Authorization: token });
+        expect(200);
+        expect(res.body).toBeDefined();
     });
 });

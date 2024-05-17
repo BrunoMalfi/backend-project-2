@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
-const { JWT_SECRET,DOMAIN,PORT } = process.env;
+const { JWT_SECRET, DOMAIN, PORT } = process.env;
 const transporter = require("../config/nodemailer");
 
 const UserController = {
@@ -19,7 +19,7 @@ const UserController = {
             const emailToken = jwt.sign({ email: req.body.email }, JWT_SECRET, {
                 expiresIn: "48h",
             });
-            const url = DOMAIN+"/users/confirm/" + emailToken;
+            const url = DOMAIN + "/users/confirm/" + emailToken;
             await transporter.sendMail({
                 to: req.body.email,
                 subject: "Activate your account",
@@ -77,18 +77,16 @@ const UserController = {
                 return res.status(400).send({ msg: "Wrong usser or Password" });
             }
             if (!user.active) {
-                return res
-                    .status(400)
-                    .send({
-                        message:
-                            "Please, confirm first your e-mail direction and then try to login",
-                    });
+                return res.status(400).send({
+                    message:
+                        "Please, confirm first your e-mail direction and then try to login",
+                });
             }
             const token = jwt.sign({ _id: user._id }, JWT_SECRET);
             if (user.tokens.length > 4) user.tokens.shift();
             user.tokens.push(token);
             await user.save();
-            res.send({ msg: "Wellcome " + user.name, token });
+            res.status(200).send({ msg: "Wellcome " + user.name, token });
         } catch (error) {
             console.error(error);
             res.send({ msg: "User not found " });
@@ -96,10 +94,10 @@ const UserController = {
     },
     async getLoggedUserData(req, res) {
         const user = await User.findById(req.user._id)
-        .populate("commentsIds")
-        .populate("postIds")
-        .populate("followersIds")
-        .populate("followingListIds")
+            .populate("commentsIds")
+            .populate("postIds")
+            .populate("followersIds")
+            .populate("followingListIds");
         res.send({ msg: "Logged user data", user });
     },
     async logout(req, res) {
@@ -153,7 +151,7 @@ const UserController = {
                 },
                 { new: true },
             );
-            res.send({
+            res.status(200).send({
                 msg: "User successfully updated",
                 oldUser,
                 newUser,
@@ -214,7 +212,7 @@ const UserController = {
         }
     },
     async followUserById(req, res, next) {
-        try{
+        try {
             const userToFollow = await User.findByIdAndUpdate(
                 req.params.id,
                 {
@@ -230,17 +228,20 @@ const UserController = {
                 { new: true },
             );
             res.send({
-                msg: "User " + userFollower.name + " is now following " + userToFollow.name ,
+                msg:
+                    "User " +
+                    userFollower.name +
+                    " is now following " +
+                    userToFollow.name,
                 userToFollow,
-                userFollower
+                userFollower,
             });
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
-        
     },
     async unFollowUserById(req, res, next) {
-        try{
+        try {
             const userToUnFollow = await User.findByIdAndUpdate(
                 req.params.id,
                 {
@@ -256,14 +257,18 @@ const UserController = {
                 { new: true },
             );
             res.send({
-                msg: "User " + userUnFollower.name + " is not following " + userToUnFollow.name +" any more" ,
+                msg:
+                    "User " +
+                    userUnFollower.name +
+                    " is not following " +
+                    userToUnFollow.name +
+                    " any more",
                 userToUnFollow,
-                userUnFollower
+                userUnFollower,
             });
-        }catch(error){
+        } catch (error) {
             console.error(error);
         }
-        
     },
 };
 module.exports = UserController;
