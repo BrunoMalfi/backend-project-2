@@ -79,18 +79,16 @@ const UserController = {
                 return res.status(400).send({ msg: "Wrong usser or Password" });
             }
             if (!user.active) {
-                return res
-                    .status(400)
-                    .send({
-                        message:
-                            "Please, confirm first your e-mail direction and then try to login",
-                    });
+                return res.status(400).send({
+                    message:
+                        "Please, confirm first your e-mail direction and then try to login",
+                });
             }
             const token = jwt.sign({ _id: user._id }, JWT_SECRET);
             if (user.tokens.length > 4) user.tokens.shift();
             user.tokens.push(token);
             await user.save();
-            res.send({ msg: "Wellcome " + user.name, token });
+            res.status(200).send({ msg: "Wellcome " + user.name, token });
         } catch (error) {
             console.error(error);
             res.send({ msg: "User not found " });

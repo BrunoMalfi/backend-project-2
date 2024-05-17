@@ -3,12 +3,12 @@ const Post = require("../models/Post.js");
 const Comment = require("../models/Comment.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { jwt_secret } = process.env;
+const { JWT_SECRET } = process.env;
 
 const authentication = async (req, res, next) => {
     try {
         const token = req.headers.authorization;
-        const payload = jwt.verify(token, jwt_secret);
+        const payload = jwt.verify(token, JWT_SECRET);
         const user = await User.findOne({ _id: payload._id, tokens: token });
         if (!user) {
             return res.status(401).send({ msg: "User not autorithed" });
