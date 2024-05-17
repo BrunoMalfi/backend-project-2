@@ -78,7 +78,7 @@ const PostController = {
                 { $pull: { postIds: req.params._id } },
                 { new: true },
             );
-            res.send({ msg: "Post deleted", post });
+            res.send({ msg: "Post deleted" });
         } catch (error) {
             console.error(error);
             res.status(500).send({
