@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET,DOMAIN,PORT } = process.env;
 const transporter = require("../config/nodemailer");
 
 const UserController = {
@@ -19,11 +19,11 @@ const UserController = {
             const emailToken = jwt.sign({ email: req.body.email }, JWT_SECRET, {
                 expiresIn: "48h",
             });
-            const url = "http://localhost:8080/users/confirm/" + emailToken;
+            const url = DOMAIN+":"+PORT+"/users/confirm/" + emailToken;
             await transporter.sendMail({
                 to: req.body.email,
                 subject: "Activate your account",
-                html: `<h3> Hi  ${user.name}, </h3><p> Thank you for signing up for Render. Click on the link below to verify your email:</p> 
+                html: `<h3> Hi  ${user.name}, </h3><p> Thank you for signing up for uour social network. Click on the link below to verify your email:</p> 
                 <a href="${url}">link</a>
                 <p>This link will expire in 48 hours</p>
                 `,
@@ -100,6 +100,8 @@ const UserController = {
         const user = await User.findById(req.user._id)
         .populate("commentsIds")
         .populate("postIds")
+        .populate("followersIds")
+        .populate("followingListIds")
         res.send({ msg: "Logged user data", user });
     },
     async logout(req, res) {
