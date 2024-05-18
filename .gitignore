@@ -1,6 +1,5 @@
 node_modules
 keys.js
-uploads/*
 .DS_Store
 test/*
 .env

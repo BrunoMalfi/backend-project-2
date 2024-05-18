@@ -16,6 +16,7 @@ router.get("/getuserbyid/:id",UserController.getUserById);
 router.get('/recoverpassowrd/:email',UserController.recoverPassword);
 router.put('/resetPassword/:recoverToken',UserController.resetPassword)
 router.put("/followuserbyid/:id",authentication,UserController.followUserById);
+router.put("/unfollowuserbyid/:id",authentication,UserController.unFollowUserById);
 
 
 
