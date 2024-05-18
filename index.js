@@ -1,10 +1,10 @@
 const express = require("express");
-const path = require('path');
 const app = express();
 require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 const { dbConnection } = require("./config/config");
 const cors = require("cors");
+const path = require('path');
 const staticDir = path.join("./uploads");
 
 const { handleTypeError } = require("./middleware/errors");
@@ -22,7 +22,7 @@ app.use("/image", require("./routes/images.js"));
 
 
 
-//app.use(handleTypeError);
+app.use(handleTypeError);
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
