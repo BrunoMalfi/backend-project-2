@@ -1,1 +1,1 @@
-This file exist in order to make appear this folder in teh repository. 
+This file exists in order to make appear this folder in the repository. 
